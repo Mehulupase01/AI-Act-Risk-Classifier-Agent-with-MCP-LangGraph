@@ -11,13 +11,14 @@
 - Phase 7 artifact intake and document intelligence foundation is complete and verified.
 - Phase 8 deterministic assessment and obligation engine foundation is complete and verified.
 - Phase 9 LangGraph workflow and governed review foundation is complete and verified.
+- Phase 10 operator interface foundation is complete and verified.
 
 ## Next Critical Steps
 
-1. Expand the operator and analyst interfaces so the frontend can consume cases, artifacts, assessments, and workflows.
-2. Introduce explicit reviewer actions and approval states on top of the governed workflow foundation.
-3. Continue moving from backend foundations to truly usable analyst-console workflows.
-4. Keep migrations, tests, and continuity docs aligned as the interface layer expands.
+1. Introduce explicit reviewer actions and approval states on top of the governed workflow foundation.
+2. Persist approval and rejection history so the system distinguishes machine output from human-approved outcome.
+3. Add report/export foundations for assessment and review records.
+4. Keep migrations, tests, and continuity docs aligned as governance surfaces expand.
 
 ## Last Verified Commands
 

@@ -39,6 +39,7 @@ npm run check
 - Phase 7 artifact intake and document intelligence foundation is verified with upload/process APIs, parser and chunking flows, extracted fact persistence, and conflict marking.
 - Phase 8 deterministic assessment and obligation engine foundation is verified with persisted assessment runs, case-level assessment APIs, fact merging, and obligation mapping.
 - Phase 9 LangGraph workflow and governed review foundation is verified with workflow-run APIs, persisted workflow state, and review gating for sensitive or conflicted outcomes.
+- Phase 10 operator interface foundation is verified with a live analyst console that can sign in, create cases, upload/process evidence, and trigger assessments and workflows.
 
 ## Update Rule
 

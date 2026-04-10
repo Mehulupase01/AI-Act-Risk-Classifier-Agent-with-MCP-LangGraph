@@ -19,6 +19,7 @@ uv run --directory apps/api python -m eu_comply_api.tools.seed_policy
 - Root `npm run check` passes, including web lint/build and API import.
 - Alembic upgrades cleanly through `007_workflow_runs` on a fresh verification database.
 - Policy fixture synchronization CLI runs successfully against a migrated database.
+- The Next.js analyst console builds cleanly against the live backend client integration.
 
 ## Notes
 

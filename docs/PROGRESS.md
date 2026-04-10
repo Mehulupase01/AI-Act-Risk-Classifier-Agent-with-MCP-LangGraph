@@ -15,10 +15,11 @@
 - Artifact intake and document intelligence foundation completed with upload/process APIs, local artifact storage, parser/chunking flows, extracted fact persistence, and Alembic migration `005_artifact_intelligence_foundation`.
 - Deterministic assessment and obligation engine foundation completed with assessment persistence, case-level assessment APIs, fact merging, conflict-aware outcomes, and Alembic migration `006_assessment_runs`.
 - LangGraph workflow and governed review foundation completed with workflow-run APIs, persisted workflow state, review routing, and Alembic migration `007_workflow_runs`.
+- Operator interface foundation completed with a live analyst console wired to backend auth, cases, artifacts, assessments, and workflows.
 
 ## In Progress
 
-- Operator interfaces and review surfaces
+- Reviewer approval and reporting foundation
 
 ## Verified
 

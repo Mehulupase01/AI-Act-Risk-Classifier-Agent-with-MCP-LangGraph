@@ -30,6 +30,7 @@
 - Prefer conservative `needs_more_information` outcomes when fact conflicts would undermine deterministic decision quality.
 - Persist workflow runs separately from assessment runs so orchestration state and decision state remain distinguishable.
 - Route prohibited and conflict-heavy outcomes into explicit review-required workflow states instead of pretending the machine run can close the case autonomously.
+- Build the analyst console against live backend endpoints rather than inventing a separate frontend-only mock state model.
 
 ## Delivery
 
