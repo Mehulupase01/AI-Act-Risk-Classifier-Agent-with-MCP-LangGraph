@@ -103,6 +103,11 @@ class CaseRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedMixin, Base):
     policy_snapshot_slug: Mapped[str | None] = mapped_column(String(120), nullable=True)
 
     organization: Mapped[OrganizationRecord] = relationship(back_populates="cases")
+    artifacts: Mapped[list[ArtifactRecord]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        order_by="ArtifactRecord.created_at.desc()",
+    )
     dossier: Mapped[SystemDossierRecord | None] = relationship(
         back_populates="case",
         cascade="all, delete-orphan",
@@ -132,6 +137,84 @@ class SystemDossierRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     human_oversight_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     case: Mapped[CaseRecord] = relationship(back_populates="dossier")
+
+
+class ArtifactRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "artifacts"
+
+    case_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cases.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    content_type: Mapped[str] = mapped_column(String(120), nullable=False)
+    size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
+    sha256: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    storage_path: Mapped[str] = mapped_column(String(500), nullable=False)
+    status: Mapped[str] = mapped_column(String(64), default="uploaded", nullable=False, index=True)
+    parser_name: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    processing_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    case: Mapped[CaseRecord] = relationship(back_populates="artifacts")
+    chunks: Mapped[list[ArtifactChunkRecord]] = relationship(
+        back_populates="artifact",
+        cascade="all, delete-orphan",
+        order_by="ArtifactChunkRecord.chunk_index",
+    )
+    extracted_facts: Mapped[list[ExtractedFactRecord]] = relationship(
+        back_populates="artifact",
+        cascade="all, delete-orphan",
+        order_by="ExtractedFactRecord.created_at",
+    )
+
+
+class ArtifactChunkRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "artifact_chunks"
+    __table_args__ = (
+        UniqueConstraint(
+            "artifact_id",
+            "chunk_index",
+            name="uq_artifact_chunks_artifact_chunk_index",
+        ),
+    )
+
+    artifact_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("artifacts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    text_content: Mapped[str] = mapped_column(Text, nullable=False)
+    char_start: Mapped[int] = mapped_column(Integer, nullable=False)
+    char_end: Mapped[int] = mapped_column(Integer, nullable=False)
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+    artifact: Mapped[ArtifactRecord] = relationship(back_populates="chunks")
+
+
+class ExtractedFactRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "extracted_facts"
+
+    case_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cases.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    artifact_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("artifacts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    field_path: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    value_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    confidence: Mapped[float] = mapped_column(nullable=False, default=0.0)
+    extraction_method: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(64), nullable=False, default="candidate")
+    rationale: Mapped[str] = mapped_column(Text, nullable=False)
+    source_chunk_indexes: Mapped[list[int]] = mapped_column(JSON, default=list, nullable=False)
+
+    artifact: Mapped[ArtifactRecord] = relationship(back_populates="extracted_facts")
 
 
 class PolicySourceRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):

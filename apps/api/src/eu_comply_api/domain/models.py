@@ -45,6 +45,17 @@ class CaseStatus(StrEnum):
     NEEDS_CHANGES = "needs_changes"
 
 
+class ArtifactStatus(StrEnum):
+    UPLOADED = "uploaded"
+    PROCESSED = "processed"
+    FAILED = "failed"
+
+
+class ExtractedFactStatus(StrEnum):
+    CANDIDATE = "candidate"
+    CONFLICT = "conflict"
+
+
 class HealthStatus(StrEnum):
     OK = "ok"
     DEGRADED = "degraded"
@@ -267,6 +278,50 @@ class CaseSummary(BaseModel):
 class CaseDetail(CaseSummary):
     description: str | None = None
     dossier: SystemDossierResponse
+
+
+class ArtifactSummary(BaseModel):
+    id: UUID
+    case_id: UUID
+    filename: str
+    content_type: str
+    size_bytes: int
+    sha256: str
+    status: ArtifactStatus
+    created_at: datetime
+    updated_at: datetime
+
+
+class ArtifactChunkSummary(BaseModel):
+    id: UUID
+    chunk_index: int
+    text_preview: str
+    char_start: int
+    char_end: int
+
+
+class ExtractedFactSummary(BaseModel):
+    id: UUID
+    field_path: str
+    value: str | bool | int | float | list[str] | dict[str, str] | None
+    confidence: float
+    extraction_method: str
+    status: ExtractedFactStatus
+    rationale: str
+
+
+class ArtifactDetail(ArtifactSummary):
+    parser_name: str | None = None
+    processing_error: str | None = None
+    chunks: list[ArtifactChunkSummary]
+    extracted_facts: list[ExtractedFactSummary]
+
+
+class ArtifactProcessResponse(BaseModel):
+    artifact: ArtifactDetail
+    chunk_count: int
+    fact_count: int
+    conflict_count: int
 
 
 class LivenessResponse(BaseModel):

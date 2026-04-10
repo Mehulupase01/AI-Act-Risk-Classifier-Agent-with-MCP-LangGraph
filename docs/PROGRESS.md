@@ -12,23 +12,22 @@
 - Policy corpus and snapshot foundation completed with seeded sources, snapshots, normalized norm fragments, detail APIs, reusable loader service, and migrations through `003_norm_fragments`.
 - Deterministic rule-pack foundation completed with fixture-backed rule definitions, list/detail APIs, and service-level evaluation tests.
 - Case registry and dossier foundation completed with CRUD APIs and Alembic migration `004_cases_and_dossiers`.
+- Artifact intake and document intelligence foundation completed with upload/process APIs, local artifact storage, parser/chunking flows, extracted fact persistence, and Alembic migration `005_artifact_intelligence_foundation`.
 
 ## In Progress
 
-- Document and artifact intake foundation
+- Deterministic assessment and obligation engine foundation
 
 ## Verified
 
 - `uv run --directory apps/api ruff check .`
-- `uv run --directory apps/api pytest` -> `16 passed`
+- `uv run --directory apps/api pytest` -> `18 passed`
 - `npm run check`
-- `uv run --directory apps/api alembic upgrade head` against a clean SQLite verification database through `004_cases_and_dossiers`
+- `uv run --directory apps/api alembic upgrade head` against a clean SQLite verification database through `005_artifact_intelligence_foundation`
 - `uv run --directory apps/api python -m eu_comply_api.tools.seed_policy`
 
 ## Pending
 
-- Artifact upload and document intake
-- Extraction pipeline
 - Deterministic assessment core
 - LangGraph workflow
 - MCP servers

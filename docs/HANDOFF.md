@@ -8,13 +8,14 @@
 - Phase 4 policy corpus and snapshot foundation is complete at the current foundation layer.
 - Phase 5 rule-pack foundation is complete and verified.
 - Phase 6 case registry and dossier foundation is complete and verified.
+- Phase 7 artifact intake and document intelligence foundation is complete and verified.
 
 ## Next Critical Steps
 
-1. Begin the document and artifact intake layer so cases can hold uploaded evidence, not just structured dossier fields.
-2. Build extraction foundations that turn uploaded evidence into normalized facts and contradictions.
-3. Start connecting the rule-pack foundation to case data through a deterministic assessment service.
-4. Keep migrations, tests, and continuity docs aligned as the intake layer expands.
+1. Start the deterministic assessment service that merges dossier facts and extracted artifact facts.
+2. Persist assessment runs, decisions, and obligation summaries instead of returning only transient rule results.
+3. Add case-level assessment APIs and tie them to rule-pack execution.
+4. Keep migrations, tests, and continuity docs aligned as the assessment core expands.
 
 ## Last Verified Commands
 

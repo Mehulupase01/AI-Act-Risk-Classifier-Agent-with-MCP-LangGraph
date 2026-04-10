@@ -24,6 +24,8 @@
 
 - Model case registry and system dossier storage as first-class backend entities before building extraction or assessment workflows on top.
 - Keep the rule-pack substrate separate from case persistence so deterministic policy logic can evolve independently of intake UX.
+- Keep artifact storage and parsing behind services so the storage backend can evolve without rewriting the API layer.
+- Persist extracted facts and mark cross-artifact conflicts early so later review workflows have explicit disagreement signals.
 
 ## Delivery
 

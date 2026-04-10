@@ -19,6 +19,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClie
     monkeypatch.setenv("EU_COMPLY_OPENROUTER_API_KEY", "test-openrouter-key")
     monkeypatch.setenv("EU_COMPLY_BOOTSTRAP_ADMIN_PASSWORD", "change-me-now")
     monkeypatch.setenv("EU_COMPLY_BOOTSTRAP_API_CLIENT_SECRET", "eu-comply-dev-secret")
+    monkeypatch.setenv("EU_COMPLY_ARTIFACT_STORAGE_PATH", str(tmp_path / "artifacts"))
     get_settings.cache_clear()
     reset_session_state()
     app = create_app()

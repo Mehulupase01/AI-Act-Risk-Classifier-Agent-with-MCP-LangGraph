@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     object_store_bucket: str = "eu-comply-artifacts"
     object_store_access_key: str = "eucomply"
     object_store_secret_key: str = "eucomply123"
+    artifact_storage_path: str = ".data/artifacts"
+    artifact_chunk_size: int = Field(default=1200, ge=200)
+    artifact_chunk_overlap: int = Field(default=150, ge=0)
 
     bootstrap_default_org_slug: str = "default"
     bootstrap_default_org_name: str = "EU-Comply Default Organization"
