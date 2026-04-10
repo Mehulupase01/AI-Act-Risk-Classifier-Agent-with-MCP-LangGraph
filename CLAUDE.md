@@ -16,7 +16,8 @@ uv run --directory apps/api alembic upgrade head
 uv run --directory apps/api uvicorn eu_comply_api.main:app --reload --app-dir src
 uv run --directory apps/api python -m eu_comply_api.tools.seed_policy
 npm --prefix apps/web run dev
-npm run check
+npm --prefix apps/web run lint
+npm --prefix apps/web run build
 ```
 
 ## Active Decisions
@@ -40,6 +41,7 @@ npm run check
 - Phase 8 deterministic assessment and obligation engine foundation is verified with persisted assessment runs, case-level assessment APIs, fact merging, and obligation mapping.
 - Phase 9 LangGraph workflow and governed review foundation is verified with workflow-run APIs, persisted workflow state, and review gating for sensitive or conflicted outcomes.
 - Phase 10 operator interface foundation is verified with a live analyst console that can sign in, create cases, upload/process evidence, and trigger assessments and workflows.
+- Phase 11 reviewer approval and reporting foundation is verified with approval-ledger persistence, review/report APIs, approval-aware case and workflow state updates, and live console actions for recording reviews and exporting reports.
 
 ## Update Rule
 

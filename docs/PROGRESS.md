@@ -16,20 +16,24 @@
 - Deterministic assessment and obligation engine foundation completed with assessment persistence, case-level assessment APIs, fact merging, conflict-aware outcomes, and Alembic migration `006_assessment_runs`.
 - LangGraph workflow and governed review foundation completed with workflow-run APIs, persisted workflow state, review routing, and Alembic migration `007_workflow_runs`.
 - Operator interface foundation completed with a live analyst console wired to backend auth, cases, artifacts, assessments, and workflows.
+- Reviewer approval and reporting foundation completed with review decision persistence, report export APIs, approval-driven case/workflow state updates, live console review actions, and Alembic migration `008_review_decisions`.
 
 ## In Progress
 
-- Reviewer approval and reporting foundation
+- MCP server and connector foundation
 
 ## Verified
 
 - `uv run --directory apps/api ruff check .`
-- `uv run --directory apps/api pytest` -> `22 passed`
-- `npm run check`
-- `uv run --directory apps/api alembic upgrade head` against a clean SQLite verification database through `007_workflow_runs`
+- `uv run --directory apps/api pytest` -> `26 passed`
+- `npm run lint` in `apps/web`
+- `npm run build` in `apps/web`
+- `uv run --directory apps/api alembic upgrade head` against a clean SQLite verification database through `008_review_decisions`
 - `uv run --directory apps/api python -m eu_comply_api.tools.seed_policy`
 
 ## Pending
 
 - MCP servers
-- Reporting, benchmarks, hardening, release
+- connectors and reassessment automation
+- deep reporting and audit-pack expansion
+- benchmarks, hardening, release

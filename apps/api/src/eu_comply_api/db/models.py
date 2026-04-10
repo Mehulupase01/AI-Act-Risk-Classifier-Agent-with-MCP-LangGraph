@@ -118,6 +118,11 @@ class CaseRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedMixin, Base):
         cascade="all, delete-orphan",
         order_by="WorkflowRunRecord.created_at.desc()",
     )
+    reviews: Mapped[list[ReviewDecisionRecord]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        order_by="ReviewDecisionRecord.created_at.desc()",
+    )
     dossier: Mapped[SystemDossierRecord | None] = relationship(
         back_populates="case",
         cascade="all, delete-orphan",
@@ -249,6 +254,7 @@ class AssessmentRunRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
 
     case: Mapped[CaseRecord] = relationship(back_populates="assessment_runs")
+    reviews: Mapped[list[ReviewDecisionRecord]] = relationship(back_populates="assessment_run")
 
 
 class WorkflowRunRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
@@ -270,6 +276,35 @@ class WorkflowRunRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     state_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
 
     case: Mapped[CaseRecord] = relationship(back_populates="workflow_runs")
+    reviews: Mapped[list[ReviewDecisionRecord]] = relationship(back_populates="workflow_run")
+
+
+class ReviewDecisionRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "review_decisions"
+
+    case_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cases.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    assessment_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("assessment_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    workflow_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("workflow_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    reviewer_identifier: Mapped[str] = mapped_column(String(255), nullable=False)
+    decision: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    rationale: Mapped[str] = mapped_column(Text, nullable=False)
+    approved_outcome: Mapped[str | None] = mapped_column(String(64), nullable=True)
+
+    case: Mapped[CaseRecord] = relationship(back_populates="reviews")
+    assessment_run: Mapped[AssessmentRunRecord | None] = relationship(back_populates="reviews")
+    workflow_run: Mapped[WorkflowRunRecord | None] = relationship(back_populates="reviews")
 
 
 class PolicySourceRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):

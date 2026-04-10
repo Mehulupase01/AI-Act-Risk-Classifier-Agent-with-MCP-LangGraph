@@ -10,12 +10,16 @@ import {
   type CaseDetail,
   type CaseSummary,
   DEFAULT_BASE_URL,
+  type ReviewDecisionSummary,
   type WorkflowRunDetail,
+  createReview,
   createCase,
+  exportReport,
   getCase,
   listArtifacts,
   listAssessments,
   listCases,
+  listReviews,
   listWorkflows,
   login,
   processArtifact,
@@ -83,6 +87,18 @@ function valueToText(value: unknown) {
   return String(value);
 }
 
+function downloadTextFile(filename: string, content: string, mediaType: string) {
+  const blob = new Blob([content], { type: mediaType });
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = downloadUrl;
+  anchor.download = filename;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  window.URL.revokeObjectURL(downloadUrl);
+}
+
 export function AnalystConsole() {
   const [baseUrl, setBaseUrl] = useState(DEFAULT_BASE_URL);
   const [email, setEmail] = useState("admin@eucomply.dev");
@@ -99,9 +115,15 @@ export function AnalystConsole() {
   const [artifacts, setArtifacts] = useState<ArtifactDetail[]>([]);
   const [assessments, setAssessments] = useState<AssessmentRunDetail[]>([]);
   const [workflows, setWorkflows] = useState<WorkflowRunDetail[]>([]);
+  const [reviews, setReviews] = useState<ReviewDecisionSummary[]>([]);
   const [caseSearch, setCaseSearch] = useState("");
   const [caseForm, setCaseForm] = useState(DEFAULT_CASE_FORM);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [reviewDecision, setReviewDecision] = useState<"approved" | "needs_changes">("approved");
+  const [reviewRationale, setReviewRationale] = useState(
+    "Compliance reviewer assessed the latest governed outcome with supporting evidence.",
+  );
+  const [reviewOutcome, setReviewOutcome] = useState("high_risk");
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const deferredSearch = useDeferredValue(caseSearch);
@@ -113,6 +135,13 @@ export function AnalystConsole() {
     }
     return `${item.title} ${item.system_name} ${item.owner_team}`.toLowerCase().includes(query);
   });
+  const latestAssessment = assessments[0] ?? null;
+  const latestWorkflow = workflows[0] ?? null;
+  const reviewTargetLabel = latestWorkflow
+    ? "latest workflow run"
+    : latestAssessment
+      ? "latest assessment run"
+      : null;
 
   async function loadCaseWorkspace(caseId: string, authToken = token, apiBaseUrl = baseUrl) {
     if (!authToken) {
@@ -120,17 +149,19 @@ export function AnalystConsole() {
     }
     setBusyAction("refresh-case");
     try {
-      const [detail, nextArtifacts, nextAssessments, nextWorkflows] = await Promise.all([
+      const [detail, nextArtifacts, nextAssessments, nextWorkflows, nextReviews] = await Promise.all([
         getCase(apiBaseUrl, authToken, caseId),
         listArtifacts(apiBaseUrl, authToken, caseId),
         listAssessments(apiBaseUrl, authToken, caseId),
         listWorkflows(apiBaseUrl, authToken, caseId),
+        listReviews(apiBaseUrl, authToken, caseId),
       ]);
       startTransition(() => {
         setSelectedCase(detail);
         setArtifacts(nextArtifacts);
         setAssessments(nextAssessments);
         setWorkflows(nextWorkflows);
+        setReviews(nextReviews);
       });
     } catch (error) {
       setNotice({
@@ -163,6 +194,7 @@ export function AnalystConsole() {
           setArtifacts([]);
           setAssessments([]);
           setWorkflows([]);
+          setReviews([]);
         }
       });
 
@@ -207,18 +239,20 @@ export function AnalystConsole() {
           });
 
           if (nextSelectedCaseId) {
-            const [detail, nextArtifacts, nextAssessments, nextWorkflows] =
+            const [detail, nextArtifacts, nextAssessments, nextWorkflows, nextReviews] =
               await Promise.all([
                 getCase(resolvedBaseUrl, savedToken, nextSelectedCaseId),
                 listArtifacts(resolvedBaseUrl, savedToken, nextSelectedCaseId),
                 listAssessments(resolvedBaseUrl, savedToken, nextSelectedCaseId),
                 listWorkflows(resolvedBaseUrl, savedToken, nextSelectedCaseId),
+                listReviews(resolvedBaseUrl, savedToken, nextSelectedCaseId),
               ]);
             startTransition(() => {
               setSelectedCase(detail);
               setArtifacts(nextArtifacts);
               setAssessments(nextAssessments);
               setWorkflows(nextWorkflows);
+              setReviews(nextReviews);
             });
           }
         } catch (error) {
@@ -276,12 +310,19 @@ export function AnalystConsole() {
       setArtifacts([]);
       setAssessments([]);
       setWorkflows([]);
+      setReviews([]);
     });
     setNotice({
       tone: "info",
       text: "Signed out. You can reconnect with the backend at any time.",
     });
   }
+
+  useEffect(() => {
+    if (assessments[0]?.primary_outcome) {
+      setReviewOutcome(assessments[0].primary_outcome);
+    }
+  }, [assessments]);
 
   async function handleCreateCase(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -400,6 +441,75 @@ export function AnalystConsole() {
       setNotice({
         tone: "error",
         text: error instanceof Error ? error.message : "Failed to run workflow.",
+      });
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function handleCreateReview() {
+    if (!token || !selectedCaseId || !reviewTargetLabel) {
+      return;
+    }
+    setBusyAction("create-review");
+    try {
+      const payload: {
+        assessment_run_id?: string;
+        workflow_run_id?: string;
+        decision: "approved" | "needs_changes";
+        rationale: string;
+        approved_outcome?: string;
+      } = {
+        decision: reviewDecision,
+        rationale: reviewRationale,
+      };
+      if (latestWorkflow?.id) {
+        payload.workflow_run_id = latestWorkflow.id;
+      }
+      if (latestWorkflow?.assessment_run_id) {
+        payload.assessment_run_id = latestWorkflow.assessment_run_id;
+      } else if (latestAssessment?.id) {
+        payload.assessment_run_id = latestAssessment.id;
+      }
+      if (reviewDecision === "approved") {
+        payload.approved_outcome = reviewOutcome;
+      }
+
+      await createReview(baseUrl, token, selectedCaseId, payload);
+      setNotice({
+        tone: reviewDecision === "approved" ? "success" : "info",
+        text:
+          reviewDecision === "approved"
+            ? "Review approved and written to the approval ledger."
+            : "Review recorded with requested changes.",
+      });
+      await loadCaseWorkspace(selectedCaseId, token, baseUrl);
+    } catch (error) {
+      setNotice({
+        tone: "error",
+        text: error instanceof Error ? error.message : "Failed to submit review.",
+      });
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function handleExportReport(format: "json" | "markdown") {
+    if (!token || !selectedCaseId) {
+      return;
+    }
+    setBusyAction(`export:${format}`);
+    try {
+      const report = await exportReport(baseUrl, token, selectedCaseId, format);
+      downloadTextFile(report.filename, report.content, report.media_type);
+      setNotice({
+        tone: "success",
+        text: `Exported ${format.toUpperCase()} report '${report.filename}'.`,
+      });
+    } catch (error) {
+      setNotice({
+        tone: "error",
+        text: error instanceof Error ? error.message : "Failed to export report.",
       });
     } finally {
       setBusyAction(null);
@@ -682,7 +792,7 @@ export function AnalystConsole() {
                             <div>
                               <strong>{artifact.filename}</strong>
                               <span>
-                                {artifact.status} · {formatDate(artifact.updated_at)}
+                                {artifact.status} | {formatDate(artifact.updated_at)}
                               </span>
                             </div>
                             <button
@@ -797,6 +907,120 @@ export function AnalystConsole() {
                       ) : null}
                     </div>
                   </article>
+
+                  <article className={styles.panel}>
+                    <div className={styles.panelHeader}>
+                      <span className={styles.panelLabel}>Reviews And Reports</span>
+                      <small>{reviews.length} review decisions</small>
+                    </div>
+                    <div className={styles.metricGrid}>
+                      <div className={styles.metricCard}>
+                        <span>Review Target</span>
+                        <strong>{reviewTargetLabel ?? "No assessment yet"}</strong>
+                      </div>
+                      <div className={styles.metricCard}>
+                        <span>Approved Outcome</span>
+                        <strong>{reviews[0]?.approved_outcome ?? "Not approved yet"}</strong>
+                      </div>
+                    </div>
+                    <div className={styles.detailBlock}>
+                      <h3>Governance Actions</h3>
+                      <p>
+                        Record a human decision against the latest assessment or workflow, then export
+                        the current assessment pack as JSON or Markdown.
+                      </p>
+                    </div>
+                    <div className={styles.authForm}>
+                      <label className={styles.field}>
+                        <span>Decision</span>
+                        <select
+                          onChange={(event) =>
+                            setReviewDecision(event.target.value as "approved" | "needs_changes")
+                          }
+                          value={reviewDecision}
+                        >
+                          <option value="approved">Approved</option>
+                          <option value="needs_changes">Needs Changes</option>
+                        </select>
+                      </label>
+                      <label className={styles.field}>
+                        <span>Approved Outcome</span>
+                        <select
+                          disabled={reviewDecision !== "approved"}
+                          onChange={(event) => setReviewOutcome(event.target.value)}
+                          value={reviewOutcome}
+                        >
+                          <option value="out_of_scope">Out Of Scope</option>
+                          <option value="prohibited">Prohibited</option>
+                          <option value="high_risk">High Risk</option>
+                          <option value="transparency_only">Transparency Only</option>
+                          <option value="gpai_related">GPAI Related</option>
+                          <option value="minimal_risk">Minimal Risk</option>
+                          <option value="needs_more_information">Needs More Information</option>
+                        </select>
+                      </label>
+                      <label className={styles.field}>
+                        <span>Rationale</span>
+                        <textarea
+                          onChange={(event) => setReviewRationale(event.target.value)}
+                          rows={4}
+                          value={reviewRationale}
+                        />
+                      </label>
+                      <div className={styles.actionRail}>
+                        <button
+                          className={styles.secondaryButton}
+                          disabled={!reviewTargetLabel || busyAction === "create-review"}
+                          onClick={() => void handleCreateReview()}
+                          type="button"
+                        >
+                          {busyAction === "create-review" ? "Recording..." : "Record Review"}
+                        </button>
+                        <button
+                          className={styles.secondaryButton}
+                          disabled={busyAction === "export:json"}
+                          onClick={() => void handleExportReport("json")}
+                          type="button"
+                        >
+                          {busyAction === "export:json" ? "Exporting..." : "Export JSON"}
+                        </button>
+                        <button
+                          className={styles.primaryButton}
+                          disabled={busyAction === "export:markdown"}
+                          onClick={() => void handleExportReport("markdown")}
+                          type="button"
+                        >
+                          {busyAction === "export:markdown" ? "Exporting..." : "Export Markdown"}
+                        </button>
+                      </div>
+                    </div>
+                    <div className={styles.stack}>
+                      {reviews.map((review) => (
+                        <section className={styles.itemCard} key={review.id}>
+                          <div className={styles.itemHeader}>
+                            <div>
+                              <strong>{review.decision.replaceAll("_", " ")}</strong>
+                              <span>{formatDate(review.created_at)}</span>
+                            </div>
+                            <span className={styles.statusBadge}>
+                              {review.approved_outcome ?? "no override"}
+                            </span>
+                          </div>
+                          <p className={styles.itemCopy}>{review.rationale}</p>
+                          <div className={styles.metaRow}>
+                            <span>{review.reviewer_identifier}</span>
+                            <span>{review.workflow_run_id ? "workflow-linked" : "assessment-linked"}</span>
+                          </div>
+                        </section>
+                      ))}
+                      {!reviews.length ? (
+                        <p className={styles.emptyCopy}>
+                          No review decisions recorded yet. Run a workflow and capture the first
+                          approval or change request here.
+                        </p>
+                      ) : null}
+                    </div>
+                  </article>
                 </div>
               </>
             ) : (
@@ -816,7 +1040,7 @@ export function AnalystConsole() {
 
       <footer className={styles.footer}>
         <span>{isPending ? "Refreshing interface..." : "Interface synced with live backend routes."}</span>
-        <span>Cases, artifacts, assessments, and workflow runs are all live surfaces now.</span>
+        <span>Cases, evidence, assessments, workflows, reviews, and report exports are live surfaces now.</span>
       </footer>
     </main>
   );

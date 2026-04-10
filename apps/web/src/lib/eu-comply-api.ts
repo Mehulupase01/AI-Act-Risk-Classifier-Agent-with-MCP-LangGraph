@@ -121,6 +121,26 @@ export type WorkflowRunDetail = {
   state: Record<string, unknown>;
 };
 
+export type ReviewDecisionSummary = {
+  id: string;
+  case_id: string;
+  assessment_run_id: string | null;
+  workflow_run_id: string | null;
+  reviewer_identifier: string;
+  decision: string;
+  rationale: string;
+  approved_outcome: string | null;
+  created_at: string;
+};
+
+export type ReportExportResponse = {
+  case_id: string;
+  format: string;
+  filename: string;
+  media_type: string;
+  content: string;
+};
+
 export type CaseCreatePayload = {
   title: string;
   description: string;
@@ -309,6 +329,53 @@ export async function runWorkflow(
     baseUrl,
     token,
     method: "POST",
+  });
+}
+
+export async function listReviews(
+  baseUrl: string,
+  token: string,
+  caseId: string,
+): Promise<ReviewDecisionSummary[]> {
+  return requestJson<ReviewDecisionSummary[]>(`/cases/${caseId}/reviews`, {
+    baseUrl,
+    token,
+  });
+}
+
+export async function createReview(
+  baseUrl: string,
+  token: string,
+  caseId: string,
+  payload: {
+    assessment_run_id?: string;
+    workflow_run_id?: string;
+    decision: "approved" | "needs_changes";
+    rationale: string;
+    approved_outcome?: string;
+  },
+): Promise<ReviewDecisionSummary> {
+  return requestJson<ReviewDecisionSummary>(`/cases/${caseId}/reviews`, {
+    baseUrl,
+    token,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function exportReport(
+  baseUrl: string,
+  token: string,
+  caseId: string,
+  format: "json" | "markdown",
+): Promise<ReportExportResponse> {
+  return requestJson<ReportExportResponse>(`/cases/${caseId}/reports/export`, {
+    baseUrl,
+    token,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ format }),
   });
 }
 

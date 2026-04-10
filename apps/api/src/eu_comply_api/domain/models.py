@@ -69,6 +69,16 @@ class WorkflowRunStatus(StrEnum):
     FAILED = "failed"
 
 
+class ReviewDecisionStatus(StrEnum):
+    APPROVED = "approved"
+    NEEDS_CHANGES = "needs_changes"
+
+
+class ReportFormat(StrEnum):
+    JSON = "json"
+    MARKDOWN = "markdown"
+
+
 class HealthStatus(StrEnum):
     OK = "ok"
     DEGRADED = "degraded"
@@ -372,6 +382,38 @@ class WorkflowRunSummary(BaseModel):
 
 class WorkflowRunDetail(WorkflowRunSummary):
     state: dict[str, object]
+
+
+class ReviewDecisionCreateRequest(BaseModel):
+    assessment_run_id: UUID | None = None
+    workflow_run_id: UUID | None = None
+    decision: ReviewDecisionStatus
+    rationale: str = Field(min_length=8)
+    approved_outcome: AssessmentOutcome | None = None
+
+
+class ReviewDecisionSummary(BaseModel):
+    id: UUID
+    case_id: UUID
+    assessment_run_id: UUID | None = None
+    workflow_run_id: UUID | None = None
+    reviewer_identifier: str
+    decision: ReviewDecisionStatus
+    rationale: str
+    approved_outcome: AssessmentOutcome | None = None
+    created_at: datetime
+
+
+class ReportExportRequest(BaseModel):
+    format: ReportFormat
+
+
+class ReportExportResponse(BaseModel):
+    case_id: UUID
+    format: ReportFormat
+    filename: str
+    media_type: str
+    content: str
 
 
 class LivenessResponse(BaseModel):

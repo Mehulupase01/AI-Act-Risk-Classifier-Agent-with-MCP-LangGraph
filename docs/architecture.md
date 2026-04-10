@@ -31,16 +31,19 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
   - extracted fact persistence and conflict marking
   - persisted assessment runs with obligation mapping
   - review-required workflow states for conflicted or prohibited outcomes
+  - explicit review-decision APIs and approval-ledger persistence
+  - exportable report generation across case, evidence, assessment, workflow, and review state
 - The current frontend surface now includes:
   - sign-in against the live backend
   - case creation and selection
   - artifact upload and processing
   - assessment and workflow triggering
   - evidence and decision inspection in a single operator console
-- The current frontend surface includes the branded landing page and the first analyst-console route skeleton.
+  - human review actions with approved outcome capture
+  - JSON and Markdown report export from the live backend
 
 ## Immediate Architecture Focus
 
-- add explicit reviewer actions and approval flows
-- prepare reporting and export surfaces on top of persisted runs and approvals
-- keep the operator console aligned with the expanding governance backend
+- implement first-party MCP server surfaces for policy, dossier, and assessment access
+- add connector and reassessment-trigger scaffolding without weakening the deterministic core
+- deepen report/export work into audit-pack quality after the integration layer is in place

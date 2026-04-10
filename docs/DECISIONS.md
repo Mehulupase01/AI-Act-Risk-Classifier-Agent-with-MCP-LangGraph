@@ -31,6 +31,9 @@
 - Persist workflow runs separately from assessment runs so orchestration state and decision state remain distinguishable.
 - Route prohibited and conflict-heavy outcomes into explicit review-required workflow states instead of pretending the machine run can close the case autonomously.
 - Build the analyst console against live backend endpoints rather than inventing a separate frontend-only mock state model.
+- Persist review decisions separately from machine-run records so the platform can distinguish human approval from machine output without mutating the underlying assessment history.
+- Let approved reviews update case and workflow closure state while keeping the original machine assessment immutable for auditability.
+- Generate exportable reports from persisted case, evidence, workflow, and review records rather than from transient frontend state.
 
 ## Delivery
 

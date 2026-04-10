@@ -194,6 +194,7 @@
 }
 
 .field input,
+.field select,
 .field textarea,
 .searchInput {
   width: 100%;

@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncIterator
 
 from sqlalchemy.ext.asyncio import (
@@ -15,8 +16,18 @@ _session_factory: async_sessionmaker[AsyncSession] | None = None
 
 def reset_session_state() -> None:
     global _engine, _session_factory
+    engine = _engine
     _engine = None
     _session_factory = None
+    if engine is not None:
+        try:
+            asyncio.run(engine.dispose())
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            try:
+                loop.run_until_complete(engine.dispose())
+            finally:
+                loop.close()
 
 
 def get_engine(settings: Settings | None = None) -> AsyncEngine:
