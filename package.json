@@ -1,0 +1,20 @@
+{
+  "name": "eu-comply",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "uv run --directory apps/api uvicorn eu_comply_api.main:app --reload --app-dir src",
+    "lint:web": "npm --prefix apps/web run lint",
+    "lint:api": "uv run --directory apps/api ruff check .",
+    "lint": "npm run lint:web && npm run lint:api",
+    "test:api": "uv run --directory apps/api pytest",
+    "build:web": "npm --prefix apps/web run build",
+    "build:api": "uv run --directory apps/api python -c \"import eu_comply_api\"",
+    "build": "npm run build:web && npm run build:api",
+    "check": "npm run lint && npm run test:api && npm run build"
+  }
+}
