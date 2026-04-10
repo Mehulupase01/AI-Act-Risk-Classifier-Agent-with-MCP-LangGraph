@@ -26,6 +26,8 @@
 - Keep the rule-pack substrate separate from case persistence so deterministic policy logic can evolve independently of intake UX.
 - Keep artifact storage and parsing behind services so the storage backend can evolve without rewriting the API layer.
 - Persist extracted facts and mark cross-artifact conflicts early so later review workflows have explicit disagreement signals.
+- Persist assessment runs as first-class records with facts, hits, conflicts, and obligations so case history remains explainable.
+- Prefer conservative `needs_more_information` outcomes when fact conflicts would undermine deterministic decision quality.
 
 ## Delivery
 

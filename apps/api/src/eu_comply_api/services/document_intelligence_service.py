@@ -133,6 +133,28 @@ class DocumentIntelligenceService:
                     )
                 )
 
+            activity_values: list[str] = []
+            if "screening" in lower_text or "candidate screening" in lower_text:
+                activity_values.append("screening")
+            if "recruit" in lower_text or "hiring" in lower_text:
+                activity_values.append("recruitment")
+            if "promotion" in lower_text:
+                activity_values.append("promotion")
+            if activity_values:
+                results.append(
+                    ExtractedFactCandidate(
+                        field_path="use_case.activities",
+                        value=sorted(set(activity_values)),
+                        confidence=0.77,
+                        extraction_method="heuristic_keyword",
+                        rationale=(
+                            "The document includes activity keywords that map to Annex III-style "
+                            "employment decision support activities."
+                        ),
+                        source_chunk_indexes=[chunk.chunk_index],
+                    )
+                )
+
             if any(keyword in lower_text for keyword in ["credit", "loan", "insurance", "bank"]):
                 results.append(
                     ExtractedFactCandidate(

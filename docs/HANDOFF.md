@@ -9,13 +9,14 @@
 - Phase 5 rule-pack foundation is complete and verified.
 - Phase 6 case registry and dossier foundation is complete and verified.
 - Phase 7 artifact intake and document intelligence foundation is complete and verified.
+- Phase 8 deterministic assessment and obligation engine foundation is complete and verified.
 
 ## Next Critical Steps
 
-1. Start the deterministic assessment service that merges dossier facts and extracted artifact facts.
-2. Persist assessment runs, decisions, and obligation summaries instead of returning only transient rule results.
-3. Add case-level assessment APIs and tie them to rule-pack execution.
-4. Keep migrations, tests, and continuity docs aligned as the assessment core expands.
+1. Begin the LangGraph workflow layer with durable run state and resumable execution.
+2. Introduce governed review gates for conflicts, missing facts, and sensitive outcomes.
+3. Start separating machine suggestion from reviewer-approved outcome in the persisted run model.
+4. Keep migrations, tests, and continuity docs aligned as workflow orchestration expands.
 
 ## Last Verified Commands
 

@@ -108,6 +108,11 @@ class CaseRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedMixin, Base):
         cascade="all, delete-orphan",
         order_by="ArtifactRecord.created_at.desc()",
     )
+    assessment_runs: Mapped[list[AssessmentRunRecord]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        order_by="AssessmentRunRecord.created_at.desc()",
+    )
     dossier: Mapped[SystemDossierRecord | None] = relationship(
         back_populates="case",
         cascade="all, delete-orphan",
@@ -215,6 +220,30 @@ class ExtractedFactRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     source_chunk_indexes: Mapped[list[int]] = mapped_column(JSON, default=list, nullable=False)
 
     artifact: Mapped[ArtifactRecord] = relationship(back_populates="extracted_facts")
+
+
+class AssessmentRunRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "assessment_runs"
+
+    case_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cases.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    rule_pack_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    status: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    primary_outcome: Mapped[str] = mapped_column(String(64), nullable=False)
+    summary: Mapped[str] = mapped_column(Text, nullable=False)
+    facts_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    conflict_fields: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    hits_json: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list, nullable=False)
+    obligations_json: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSON,
+        default=list,
+        nullable=False,
+    )
+
+    case: Mapped[CaseRecord] = relationship(back_populates="assessment_runs")
 
 
 class PolicySourceRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):

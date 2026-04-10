@@ -37,6 +37,7 @@ npm run check
 - Phase 5 deterministic rule-pack foundation is verified with fixture-backed packs, list/detail APIs, and service-level evaluation tests.
 - Phase 6 case registry and dossier foundation is verified with CRUD APIs, migrations, and tests.
 - Phase 7 artifact intake and document intelligence foundation is verified with upload/process APIs, parser and chunking flows, extracted fact persistence, and conflict marking.
+- Phase 8 deterministic assessment and obligation engine foundation is verified with persisted assessment runs, case-level assessment APIs, fact merging, and obligation mapping.
 
 ## Update Rule
 

@@ -56,6 +56,12 @@ class ExtractedFactStatus(StrEnum):
     CONFLICT = "conflict"
 
 
+class AssessmentRunStatus(StrEnum):
+    COMPLETED = "completed"
+    NEEDS_REVIEW = "needs_review"
+    FAILED = "failed"
+
+
 class HealthStatus(StrEnum):
     OK = "ok"
     DEGRADED = "degraded"
@@ -322,6 +328,29 @@ class ArtifactProcessResponse(BaseModel):
     chunk_count: int
     fact_count: int
     conflict_count: int
+
+
+class ObligationItem(BaseModel):
+    tag: str
+    title: str
+    description: str
+
+
+class AssessmentRunSummary(BaseModel):
+    id: UUID
+    case_id: UUID
+    rule_pack_id: str
+    status: AssessmentRunStatus
+    primary_outcome: AssessmentOutcome
+    created_at: datetime
+
+
+class AssessmentRunDetail(AssessmentRunSummary):
+    summary: str
+    facts: dict[str, object]
+    conflict_fields: list[str]
+    hits: list[RuleHit]
+    obligations: list[ObligationItem]
 
 
 class LivenessResponse(BaseModel):
