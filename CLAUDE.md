@@ -15,6 +15,7 @@ uv run --directory apps/api pytest
 uv run --directory apps/api alembic upgrade head
 uv run --directory apps/api uvicorn eu_comply_api.main:app --reload --app-dir src
 uv run --directory apps/api python -m eu_comply_api.tools.seed_policy
+uv run --directory apps/api python -m eu_comply_api.tools.run_benchmarks
 npm --prefix apps/web run dev
 npm --prefix apps/web run lint
 npm --prefix apps/web run build
@@ -44,6 +45,7 @@ npm --prefix apps/web run build
 - Phase 11 reviewer approval and reporting foundation is verified with approval-ledger persistence, review/report APIs, approval-aware case and workflow state updates, and live console actions for recording reviews and exporting reports.
 - Phase 12 integration foundation is verified with first-party MCP servers, persisted connector registry APIs, auditable connector sync runs, and case-linked reassessment triggers that can optionally auto-run governed workflows.
 - Phase 13 audit-pack expansion is verified with bundled ZIP audit exports, policy fragment inclusion, reassessment history in report artifacts, MCP audit-pack access, and a live console action for exporting the archive.
+- Phase 14 evaluation and hardening is verified with a golden benchmark fixture and CLI, org-scoped metrics output, and readiness checks for database, bootstrap org, policy snapshots, and artifact storage.
 
 ## Update Rule
 

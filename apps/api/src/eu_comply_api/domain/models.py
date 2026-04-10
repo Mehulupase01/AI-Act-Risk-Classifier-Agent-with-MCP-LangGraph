@@ -116,6 +116,29 @@ class ReassessmentStatus(StrEnum):
     FAILED = "failed"
 
 
+class BenchmarkScenario(BaseModel):
+    scenario_id: str
+    title: str
+    pack_id: str
+    expected_outcome: AssessmentOutcome
+    facts: dict[str, object]
+
+
+class BenchmarkScenarioResult(BaseModel):
+    scenario_id: str
+    expected_outcome: AssessmentOutcome
+    actual_outcome: AssessmentOutcome | None = None
+    passed: bool
+    matched_rule_ids: list[str]
+
+
+class BenchmarkRunSummary(BaseModel):
+    total_cases: int
+    passed_cases: int
+    accuracy: float
+    failures: list[BenchmarkScenarioResult]
+
+
 class HealthStatus(StrEnum):
     OK = "ok"
     DEGRADED = "degraded"

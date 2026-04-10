@@ -1,0 +1,100 @@
+{
+  "cases": [
+    {
+      "scenario_id": "prohibited-biometric-law-enforcement",
+      "title": "Prohibited biometric identification",
+      "pack_id": "eu-ai-act-baseline",
+      "expected_outcome": "prohibited",
+      "facts": {
+        "system": {
+          "capabilities": {
+            "remote_biometric_identification": true
+          },
+          "modalities": []
+        },
+        "deployment": {
+          "context": {
+            "law_enforcement_real_time_public_space": true
+          },
+          "interacts_with_natural_persons": false
+        },
+        "use_case": {
+          "domain": "public_safety",
+          "activities": []
+        }
+      }
+    },
+    {
+      "scenario_id": "high-risk-employment-screening",
+      "title": "Employment screening support",
+      "pack_id": "eu-ai-act-baseline",
+      "expected_outcome": "high_risk",
+      "facts": {
+        "system": {
+          "modalities": []
+        },
+        "deployment": {
+          "interacts_with_natural_persons": true
+        },
+        "use_case": {
+          "domain": "employment",
+          "activities": ["screening", "recruitment"]
+        }
+      }
+    },
+    {
+      "scenario_id": "transparency-chatbot",
+      "title": "Chatbot interaction",
+      "pack_id": "eu-ai-act-baseline",
+      "expected_outcome": "transparency_only",
+      "facts": {
+        "system": {
+          "modalities": ["chatbot"]
+        },
+        "deployment": {
+          "interacts_with_natural_persons": true
+        },
+        "use_case": {
+          "domain": "customer_support",
+          "activities": []
+        }
+      }
+    },
+    {
+      "scenario_id": "minimal-risk-backoffice",
+      "title": "Back-office analytics",
+      "pack_id": "eu-ai-act-baseline",
+      "expected_outcome": "minimal_risk",
+      "facts": {
+        "system": {
+          "modalities": ["analytics"]
+        },
+        "deployment": {
+          "interacts_with_natural_persons": false
+        },
+        "use_case": {
+          "domain": "operations",
+          "activities": ["forecasting"]
+        }
+      }
+    },
+    {
+      "scenario_id": "high-risk-employment-promotion",
+      "title": "Promotion decision support",
+      "pack_id": "eu-ai-act-baseline",
+      "expected_outcome": "high_risk",
+      "facts": {
+        "system": {
+          "modalities": ["scoring"]
+        },
+        "deployment": {
+          "interacts_with_natural_persons": true
+        },
+        "use_case": {
+          "domain": "employment",
+          "activities": ["promotion"]
+        }
+      }
+    }
+  ]
+}

@@ -19,20 +19,22 @@
 - Reviewer approval and reporting foundation completed with review decision persistence, report export APIs, approval-driven case/workflow state updates, live console review actions, and Alembic migration `008_review_decisions`.
 - MCP, connector, and reassessment foundation completed with mounted first-party MCP servers, connector registry APIs, auditable sync runs, reassessment trigger APIs, and Alembic migration `009_connector_reassessment_foundation`.
 - Audit-pack expansion completed with ZIP audit bundles, manifest generation, policy fragment exports, reassessment history capture, MCP audit-pack tooling, and analyst-console export actions.
+- Evaluation and hardening foundation completed with a golden-case benchmark fixture, benchmark CLI, real readiness checks, and org-scoped metrics export.
 
 ## In Progress
 
-- Evaluation, benchmark, and hardening phase
+- Release packaging and deployment guidance
 
 ## Verified
 
 - `uv run --directory apps/api ruff check .`
-- `uv run --directory apps/api pytest` -> `33 passed`
+- `uv run --directory apps/api pytest` -> `36 passed`
 - `npm run lint` in `apps/web`
 - `npm run build` in `apps/web`
 - `uv run --directory apps/api alembic upgrade head` against a clean SQLite verification database through `009_connector_reassessment_foundation`
 - `uv run --directory apps/api python -m eu_comply_api.tools.seed_policy` against the SQLite verification database
+- `uv run --directory apps/api python -m eu_comply_api.tools.run_benchmarks` -> `accuracy: 1.0`
 
 ## Pending
 
-- benchmarks, hardening, release
+- release packaging and deployment guidance

@@ -37,6 +37,8 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
   - tenant-scoped connector registry APIs with auditable sync-run history
   - case-linked reassessment triggers that can optionally auto-run governed workflows
   - ZIP audit-pack generation with manifest, workspace snapshot, policy snapshot, and referenced fragments
+  - benchmark harness plus CLI-driven regression checks for deterministic rule behavior
+  - authenticated org-scoped metrics and real readiness checks for runtime health
 - The current frontend surface now includes:
   - sign-in against the live backend
   - case creation and selection
@@ -49,5 +51,5 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
 
 ## Immediate Architecture Focus
 
-- broaden benchmark, adversarial, and operations coverage around the new integration surfaces
-- continue toward release hardening without weakening the deterministic core
+- finish release packaging and deployment guidance without weakening the deterministic core
+- keep broadening benchmark, adversarial, and operations coverage as part of release validation

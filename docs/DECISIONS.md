@@ -40,6 +40,9 @@
 - Allow connector-driven reassessments to auto-run governed workflows, but keep review approval actions outside the MCP write surface.
 - Generate audit packs as ZIP bundles with a manifest plus stable JSON/Markdown artifacts so reviews, evidence, and policy context can be shipped together without depending on live API state.
 - Include referenced policy fragments and reassessment history in the audit archive so exported governance records stay traceable after external system changes.
+- Keep benchmark fixtures in-repo and executable through a CLI so rule regressions can be checked without needing a live frontend or manual API exercise.
+- Expose metrics as org-scoped authenticated Prometheus-style text instead of a public global endpoint so operational visibility does not leak cross-tenant counts.
+- Make readiness checks exercise real dependencies such as database connectivity, seeded policy presence, and artifact storage writability rather than returning static configuration-only status.
 
 ## Delivery
 
