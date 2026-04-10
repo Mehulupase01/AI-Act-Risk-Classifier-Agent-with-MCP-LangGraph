@@ -560,6 +560,33 @@ class ReportExportResponse(BaseModel):
     content: str
 
 
+class AuditPackFileSummary(BaseModel):
+    path: str
+    media_type: str
+    size_bytes: int
+
+
+class AuditPackManifest(BaseModel):
+    generated_at: datetime
+    case_id: UUID
+    case_title: str
+    policy_snapshot_slug: str | None = None
+    latest_assessment_outcome: AssessmentOutcome | None = None
+    artifact_count: int
+    review_count: int
+    reassessment_count: int
+    referenced_citations: list[str]
+    files: list[AuditPackFileSummary]
+
+
+class AuditPackExportResponse(BaseModel):
+    case_id: UUID
+    filename: str
+    media_type: str
+    content_base64: str
+    manifest: AuditPackManifest
+
+
 class LivenessResponse(BaseModel):
     status: HealthStatus
     service: str
