@@ -12,6 +12,7 @@ import {
   DEFAULT_BASE_URL,
   type ReviewDecisionSummary,
   type WorkflowRunDetail,
+  exportAuditPack,
   createReview,
   createCase,
   exportReport,
@@ -89,6 +90,20 @@ function valueToText(value: unknown) {
 
 function downloadTextFile(filename: string, content: string, mediaType: string) {
   const blob = new Blob([content], { type: mediaType });
+  const downloadUrl = window.URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = downloadUrl;
+  anchor.download = filename;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  window.URL.revokeObjectURL(downloadUrl);
+}
+
+function downloadBase64File(filename: string, contentBase64: string, mediaType: string) {
+  const binary = window.atob(contentBase64);
+  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  const blob = new Blob([bytes], { type: mediaType });
   const downloadUrl = window.URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = downloadUrl;
@@ -516,6 +531,32 @@ export function AnalystConsole() {
     }
   }
 
+  async function handleExportAuditPack() {
+    if (!token || !selectedCaseId) {
+      return;
+    }
+    setBusyAction("export:audit-pack");
+    try {
+      const auditPack = await exportAuditPack(baseUrl, token, selectedCaseId);
+      downloadBase64File(
+        auditPack.filename,
+        auditPack.content_base64,
+        auditPack.media_type,
+      );
+      setNotice({
+        tone: "success",
+        text: `Exported audit pack '${auditPack.filename}' with ${auditPack.manifest.files.length} bundled files.`,
+      });
+    } catch (error) {
+      setNotice({
+        tone: "error",
+        text: error instanceof Error ? error.message : "Failed to export audit pack.",
+      });
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
@@ -927,7 +968,7 @@ export function AnalystConsole() {
                       <h3>Governance Actions</h3>
                       <p>
                         Record a human decision against the latest assessment or workflow, then export
-                        the current assessment pack as JSON or Markdown.
+                        the current assessment pack as JSON, Markdown, or a bundled audit archive.
                       </p>
                     </div>
                     <div className={styles.authForm}>
@@ -992,6 +1033,14 @@ export function AnalystConsole() {
                         >
                           {busyAction === "export:markdown" ? "Exporting..." : "Export Markdown"}
                         </button>
+                        <button
+                          className={styles.primaryButton}
+                          disabled={busyAction === "export:audit-pack"}
+                          onClick={() => void handleExportAuditPack()}
+                          type="button"
+                        >
+                          {busyAction === "export:audit-pack" ? "Exporting..." : "Export Audit Pack"}
+                        </button>
                       </div>
                     </div>
                     <div className={styles.stack}>
@@ -1040,7 +1089,7 @@ export function AnalystConsole() {
 
       <footer className={styles.footer}>
         <span>{isPending ? "Refreshing interface..." : "Interface synced with live backend routes."}</span>
-        <span>Cases, evidence, assessments, workflows, reviews, and report exports are live surfaces now.</span>
+        <span>Cases, evidence, assessments, workflows, reviews, and audit-pack exports are live surfaces now.</span>
       </footer>
     </main>
   );

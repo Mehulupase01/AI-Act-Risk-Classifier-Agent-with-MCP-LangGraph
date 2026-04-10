@@ -188,6 +188,7 @@ async def test_assessment_mcp_runs_assessment_and_exports_report(mcp_app) -> Non
                 "list_case_reassessments",
                 "trigger_case_reassessment",
                 "export_case_report",
+                "export_audit_pack",
             }
 
             assessment_result = await session.call_tool("run_assessment", {"case_id": case_id})
@@ -201,6 +202,11 @@ async def test_assessment_mcp_runs_assessment_and_exports_report(mcp_app) -> Non
             )
             report = _tool_payload(report_result)
             assert report["filename"].endswith(".json")
+
+            audit_pack_result = await session.call_tool("export_audit_pack", {"case_id": case_id})
+            audit_pack = _tool_payload(audit_pack_result)
+            assert audit_pack["filename"].endswith(".zip")
+            assert audit_pack["manifest"]["case_id"] == case_id
 
             reassessment_result = await session.call_tool(
                 "trigger_case_reassessment",

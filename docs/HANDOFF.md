@@ -14,12 +14,13 @@
 - Phase 10 operator interface foundation is complete and verified.
 - Phase 11 reviewer approval and reporting foundation is complete and verified.
 - Phase 12 integration foundation is complete and verified.
+- Phase 13 audit-pack expansion is complete and verified.
 
 ## Next Critical Steps
 
-1. Expand report/export work into audit-pack depth so approved assessments can ship with stronger evidence bundles and reviewer-facing artifacts.
-2. Add broader evaluation coverage and adversarial benchmark scenarios around connectors, reassessment automation, and MCP-assisted operations.
-3. Keep migrations, tests, and continuity docs aligned as the release-hardening phases begin.
+1. Add broader evaluation coverage and adversarial benchmark scenarios around connectors, reassessment automation, MCP-assisted operations, and audit-pack exports.
+2. Introduce stronger observability and operational hardening so queue, workflow, and integration health are measurable before release.
+3. Keep migrations, tests, and continuity docs aligned as the benchmark and release-hardening phases begin.
 
 ## Last Verified Commands
 

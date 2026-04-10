@@ -141,6 +141,29 @@ export type ReportExportResponse = {
   content: string;
 };
 
+export type AuditPackExportResponse = {
+  case_id: string;
+  filename: string;
+  media_type: string;
+  content_base64: string;
+  manifest: {
+    generated_at: string;
+    case_id: string;
+    case_title: string;
+    policy_snapshot_slug: string | null;
+    latest_assessment_outcome: string | null;
+    artifact_count: number;
+    review_count: number;
+    reassessment_count: number;
+    referenced_citations: string[];
+    files: Array<{
+      path: string;
+      media_type: string;
+      size_bytes: number;
+    }>;
+  };
+};
+
 export type CaseCreatePayload = {
   title: string;
   description: string;
@@ -376,6 +399,18 @@ export async function exportReport(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ format }),
+  });
+}
+
+export async function exportAuditPack(
+  baseUrl: string,
+  token: string,
+  caseId: string,
+): Promise<AuditPackExportResponse> {
+  return requestJson<AuditPackExportResponse>(`/cases/${caseId}/reports/audit-pack`, {
+    baseUrl,
+    token,
+    method: "POST",
   });
 }
 

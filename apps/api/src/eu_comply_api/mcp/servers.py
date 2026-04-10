@@ -16,6 +16,7 @@ from eu_comply_api.db.models import OrganizationRecord
 from eu_comply_api.domain.models import (
     ArtifactDetail,
     AssessmentRunDetail,
+    AuditPackExportResponse,
     CaseDetail,
     CaseSummary,
     CaseWorkspaceSnapshot,
@@ -349,6 +350,14 @@ def _build_assessment_server(context: MCPRuntimeContext) -> FastMCP:
                 organization_id,
                 UUID(case_id),
                 ReportExportRequest(format=ReportFormat(format)),
+            )
+
+    @mcp.tool()
+    async def export_audit_pack(case_id: str) -> AuditPackExportResponse:
+        async with context.organization_session() as (session, organization_id):
+            return await ReportService(session).export_audit_pack(
+                organization_id,
+                UUID(case_id),
             )
 
     @mcp.resource("assessment://{case_id}/latest")

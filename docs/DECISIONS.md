@@ -38,6 +38,8 @@
 - Model enterprise integrations as tenant-scoped connector records plus auditable sync-run history instead of hiding external changes behind ad hoc webhook handlers.
 - Persist reassessment triggers separately from workflow runs so external change events, manual requests, and workflow execution history remain distinguishable.
 - Allow connector-driven reassessments to auto-run governed workflows, but keep review approval actions outside the MCP write surface.
+- Generate audit packs as ZIP bundles with a manifest plus stable JSON/Markdown artifacts so reviews, evidence, and policy context can be shipped together without depending on live API state.
+- Include referenced policy fragments and reassessment history in the audit archive so exported governance records stay traceable after external system changes.
 
 ## Delivery
 
