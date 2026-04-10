@@ -9,6 +9,7 @@ from eu_comply_api.db.models import (
     OrganizationRecord,
     UserRecord,
 )
+from eu_comply_api.services.policy_fixture_loader import PolicyFixtureLoader
 
 
 async def bootstrap_defaults(session: AsyncSession, settings: Settings) -> None:
@@ -77,3 +78,6 @@ async def bootstrap_defaults(session: AsyncSession, settings: Settings) -> None:
                 metadata_json={},
             )
         )
+
+    loader = PolicyFixtureLoader(session)
+    await loader.seed_default_fixture(settings.policy_fixture_path)

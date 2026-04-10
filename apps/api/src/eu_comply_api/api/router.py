@@ -1,0 +1,11 @@
+from fastapi import APIRouter
+
+from eu_comply_api.api.routes import auth, cases, health, policy, rules, runtime
+
+api_router = APIRouter()
+api_router.include_router(health.router, tags=["health"])
+api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(cases.router, tags=["cases"])
+api_router.include_router(runtime.router, prefix="/runtime", tags=["runtime"])
+api_router.include_router(policy.router, tags=["policy"])
+api_router.include_router(rules.router, tags=["rules"])

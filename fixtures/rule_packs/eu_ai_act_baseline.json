@@ -1,0 +1,71 @@
+{
+  "pack": {
+    "pack_id": "eu-ai-act-baseline",
+    "title": "EU AI Act Baseline Rule Pack",
+    "version": "2026-04-10",
+    "snapshot_slug": "eu-ai-act-baseline-2026-04-10",
+    "description": "Initial deterministic rule foundation for prohibited, high-risk, and transparency-only assessments."
+  },
+  "rules": [
+    {
+      "rule_id": "prohibited_real_time_remote_biometric_identification",
+      "title": "Prohibited real-time remote biometric identification",
+      "description": "Flags covered real-time remote biometric identification in publicly accessible spaces for law-enforcement contexts.",
+      "priority": 100,
+      "outcome": "prohibited",
+      "citation_refs": ["Article 5"],
+      "obligation_tags": ["stop_deployment", "legal_review"],
+      "conditions": [
+        {
+          "field_path": "system.capabilities.remote_biometric_identification",
+          "operator": "is_true"
+        },
+        {
+          "field_path": "deployment.context.law_enforcement_real_time_public_space",
+          "operator": "is_true"
+        }
+      ]
+    },
+    {
+      "rule_id": "high_risk_employment_decision_support",
+      "title": "High-risk employment decision support",
+      "description": "Flags AI used for recruitment, worker selection, or employment access decisions.",
+      "priority": 80,
+      "outcome": "high_risk",
+      "citation_refs": ["Article 6", "Annex III"],
+      "obligation_tags": ["risk_management", "human_oversight", "logging"],
+      "conditions": [
+        {
+          "field_path": "use_case.domain",
+          "operator": "equals",
+          "value": "employment"
+        },
+        {
+          "field_path": "use_case.activities",
+          "operator": "contains_any",
+          "value": ["recruitment", "screening", "promotion"]
+        }
+      ]
+    },
+    {
+      "rule_id": "transparency_chatbot_interaction",
+      "title": "Transparency obligations for chatbot interaction",
+      "description": "Flags AI systems that directly interact with natural persons in covered conversational scenarios.",
+      "priority": 40,
+      "outcome": "transparency_only",
+      "citation_refs": ["Article 50"],
+      "obligation_tags": ["disclosure_notice"],
+      "conditions": [
+        {
+          "field_path": "system.modalities",
+          "operator": "contains_any",
+          "value": ["chatbot", "conversational_ai"]
+        },
+        {
+          "field_path": "deployment.interacts_with_natural_persons",
+          "operator": "is_true"
+        }
+      ]
+    }
+  ]
+}

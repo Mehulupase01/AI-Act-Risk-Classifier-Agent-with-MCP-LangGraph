@@ -1,0 +1,87 @@
+{
+  "snapshot": {
+    "slug": "eu-ai-act-baseline-2026-04-10",
+    "title": "EU AI Act Baseline Snapshot",
+    "jurisdiction": "eu",
+    "effective_from": "2026-04-10T00:00:00+00:00",
+    "description": "Baseline policy registry for the EU AI Act flagship build, tracking binding law, official guidance, and related implementation materials."
+  },
+  "sources": [
+    {
+      "slug": "eu-ai-act-regulation",
+      "title": "Regulation (EU) 2024/1689",
+      "source_type": "binding_law",
+      "authority": "EUR-Lex",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1689",
+      "status": "active"
+    },
+    {
+      "slug": "eu-ai-act-faq",
+      "title": "Navigating the AI Act FAQ",
+      "source_type": "official_guidance",
+      "authority": "European Commission",
+      "url": "https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act",
+      "status": "active"
+    },
+    {
+      "slug": "eu-ai-act-standardisation",
+      "title": "AI Act Standardisation",
+      "source_type": "official_guidance",
+      "authority": "European Commission",
+      "url": "https://digital-strategy.ec.europa.eu/en/policies/ai-act-standardisation",
+      "status": "active"
+    }
+  ],
+  "fragments": [
+    {
+      "source_slug": "eu-ai-act-regulation",
+      "fragment_type": "article",
+      "citation": "Article 5",
+      "heading": "Prohibited AI practices",
+      "body": "Establishes categories of AI practices that are prohibited in the Union, including certain manipulative, exploitative, social scoring, and biometric uses.",
+      "actor_scope": ["provider", "deployer"],
+      "tags": ["prohibited_practices", "classification"],
+      "order_index": 10
+    },
+    {
+      "source_slug": "eu-ai-act-regulation",
+      "fragment_type": "article",
+      "citation": "Article 6",
+      "heading": "Classification rules for high-risk AI systems",
+      "body": "Defines when AI systems fall into the Act's high-risk category, including product-linked cases and Annex III standalone use cases.",
+      "actor_scope": ["provider", "deployer", "importer", "distributor"],
+      "tags": ["high_risk", "classification"],
+      "order_index": 20
+    },
+    {
+      "source_slug": "eu-ai-act-regulation",
+      "fragment_type": "article",
+      "citation": "Article 50",
+      "heading": "Transparency obligations",
+      "body": "Requires specific transparency measures for certain AI interactions and generated content, such as informing people when they interact with AI in covered scenarios.",
+      "actor_scope": ["provider", "deployer"],
+      "tags": ["transparency", "obligations"],
+      "order_index": 30
+    },
+    {
+      "source_slug": "eu-ai-act-faq",
+      "fragment_type": "guidance",
+      "citation": "Commission FAQ - phased application",
+      "heading": "Phased application timeline",
+      "body": "Explains the staged application of the AI Act, including dates for prohibitions, GPAI duties, and the broader main obligations.",
+      "actor_scope": ["provider", "deployer", "governance"],
+      "tags": ["timeline", "application_dates"],
+      "order_index": 40
+    },
+    {
+      "source_slug": "eu-ai-act-standardisation",
+      "fragment_type": "guidance",
+      "citation": "Commission standardisation guidance",
+      "heading": "Standards and conformity support",
+      "body": "Describes the role of harmonised standards and implementation support materials for demonstrating compliance with relevant AI Act obligations.",
+      "actor_scope": ["provider", "quality_assurance"],
+      "tags": ["standards", "conformity_assessment"],
+      "order_index": 50
+    }
+  ]
+}

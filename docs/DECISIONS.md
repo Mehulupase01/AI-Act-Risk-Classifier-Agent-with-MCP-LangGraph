@@ -12,6 +12,19 @@
 - Support `OpenRouter` for hosted inference and `Ollama` for local/self-host inference.
 - Use native Ollama APIs for chat and embeddings.
 
+## Persistence And Verification
+
+- Keep Alembic migrations in place even while local development also supports schema auto-create.
+- Treat migration verification as part of phase closure, not an optional extra.
+- Seed a baseline policy registry during bootstrap so later policy and rule-engine work has a stable foundation.
+- Model policy knowledge as snapshots plus normalized fragments so later rule packs can use structured citations instead of raw retrieval alone.
+- Introduce a reusable policy-loader service and CLI so policy synchronization is not trapped inside application startup.
+
+## Product Structure
+
+- Model case registry and system dossier storage as first-class backend entities before building extraction or assessment workflows on top.
+- Keep the rule-pack substrate separate from case persistence so deterministic policy logic can evolve independently of intake UX.
+
 ## Delivery
 
 - Close phases only when code, tests, docs, and verification notes agree.

@@ -1,11 +1,22 @@
 from collections.abc import AsyncIterator
 
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from eu_comply_api.config import Settings, get_settings
 
 _engine: AsyncEngine | None = None
 _session_factory: async_sessionmaker[AsyncSession] | None = None
+
+
+def reset_session_state() -> None:
+    global _engine, _session_factory
+    _engine = None
+    _session_factory = None
 
 
 def get_engine(settings: Settings | None = None) -> AsyncEngine:

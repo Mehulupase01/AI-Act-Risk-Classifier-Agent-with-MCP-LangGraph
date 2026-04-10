@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     api_prefix: str = "/api/v1"
     secret_key: str = "change-me-in-production"
     access_token_expire_minutes: int = 60
+    auto_create_schema: bool = True
 
     database_url: str = (
         "postgresql+asyncpg://eu_comply:eu_comply@localhost:5432/eu_comply"
@@ -34,10 +35,11 @@ class Settings(BaseSettings):
 
     bootstrap_default_org_slug: str = "default"
     bootstrap_default_org_name: str = "EU-Comply Default Organization"
-    bootstrap_admin_email: str = "admin@eu-comply.local"
+    bootstrap_admin_email: str = "admin@eucomply.dev"
     bootstrap_admin_password: str = "change-me-now"
     bootstrap_api_client_id: str = "eu-comply-dev-client"
     bootstrap_api_client_secret: str = "eu-comply-dev-secret"
+    policy_fixture_path: str | None = None
 
     llm_default_provider: ProviderKind = "ollama"
     embedding_default_provider: ProviderKind = "ollama"

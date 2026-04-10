@@ -57,6 +57,11 @@ target-version = "py313"
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "ASYNC"]
 
+[tool.ruff.lint.per-file-ignores]
+"alembic/versions/*.py" = ["E501"]
+"src/eu_comply_api/api/deps.py" = ["B008"]
+"src/eu_comply_api/api/routes/*.py" = ["B008"]
+
 [tool.mypy]
 python_version = "3.13"
 strict = true

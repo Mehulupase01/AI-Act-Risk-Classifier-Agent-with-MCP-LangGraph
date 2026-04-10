@@ -12,9 +12,37 @@ class ProviderKind(StrEnum):
     OLLAMA = "ollama"
 
 
+class AssessmentOutcome(StrEnum):
+    OUT_OF_SCOPE = "out_of_scope"
+    PROHIBITED = "prohibited"
+    HIGH_RISK = "high_risk"
+    TRANSPARENCY_ONLY = "transparency_only"
+    GPAI_RELATED = "gpai_related"
+    MINIMAL_RISK = "minimal_risk"
+    NEEDS_MORE_INFORMATION = "needs_more_information"
+
+
 class ActorType(StrEnum):
     USER = "user"
     API_CLIENT = "api_client"
+
+
+class ActorRole(StrEnum):
+    PROVIDER = "provider"
+    DEPLOYER = "deployer"
+    IMPORTER = "importer"
+    DISTRIBUTOR = "distributor"
+    AUTHORIZED_REPRESENTATIVE = "authorized_representative"
+    OTHER = "other"
+
+
+class CaseStatus(StrEnum):
+    DRAFT = "draft"
+    INTAKE_IN_PROGRESS = "intake_in_progress"
+    READY_FOR_ASSESSMENT = "ready_for_assessment"
+    UNDER_REVIEW = "under_review"
+    APPROVED = "approved"
+    NEEDS_CHANGES = "needs_changes"
 
 
 class HealthStatus(StrEnum):
@@ -91,6 +119,154 @@ class ModelCapabilitySummary(BaseModel):
 class RuntimeDiscoveryResponse(BaseModel):
     provider: ProviderKind
     models: list[ModelCapabilitySummary]
+
+
+class PolicySourceSummary(BaseModel):
+    id: UUID
+    slug: str
+    title: str
+    source_type: str
+    authority: str
+    url: str
+    status: str
+
+
+class PolicySnapshotSummary(BaseModel):
+    id: UUID
+    slug: str
+    title: str
+    jurisdiction: str
+    effective_from: datetime
+    description: str
+    sources: list[PolicySourceSummary]
+
+
+class NormFragmentSummary(BaseModel):
+    id: UUID
+    fragment_type: str
+    citation: str
+    heading: str
+    body: str
+    actor_scope: list[str]
+    tags: list[str]
+    order_index: int
+    source_slug: str
+    source_title: str
+
+
+class PolicySnapshotDetail(PolicySnapshotSummary):
+    fragments: list[NormFragmentSummary]
+
+
+class RuleOperator(StrEnum):
+    EQUALS = "equals"
+    NOT_EQUALS = "not_equals"
+    IN = "in"
+    EXISTS = "exists"
+    IS_TRUE = "is_true"
+    IS_FALSE = "is_false"
+    CONTAINS_ANY = "contains_any"
+
+
+class RuleCondition(BaseModel):
+    field_path: str
+    operator: RuleOperator
+    value: str | bool | int | float | list[str] | None = None
+    description: str | None = None
+
+
+class RuleDefinition(BaseModel):
+    rule_id: str
+    title: str
+    description: str
+    priority: int
+    outcome: AssessmentOutcome
+    citation_refs: list[str]
+    obligation_tags: list[str]
+    conditions: list[RuleCondition]
+
+
+class RulePackSummary(BaseModel):
+    pack_id: str
+    title: str
+    version: str
+    snapshot_slug: str
+    description: str
+    rule_count: int
+
+
+class RulePackDetail(RulePackSummary):
+    rules: list[RuleDefinition]
+
+
+class RuleHit(BaseModel):
+    rule_id: str
+    title: str
+    outcome: AssessmentOutcome
+    priority: int
+    citation_refs: list[str]
+    obligation_tags: list[str]
+
+
+class RuleEvaluationResult(BaseModel):
+    pack_id: str
+    primary_outcome: AssessmentOutcome | None = None
+    hits: list[RuleHit]
+
+
+class SystemDossierInput(BaseModel):
+    system_name: str = Field(min_length=3)
+    actor_role: ActorRole
+    sector: str = Field(min_length=2)
+    intended_purpose: str = Field(min_length=10)
+    model_provider: str | None = None
+    model_name: str | None = None
+    uses_generative_ai: bool = False
+    affects_natural_persons: bool = True
+    geographic_scope: list[str] = Field(default_factory=list)
+    deployment_channels: list[str] = Field(default_factory=list)
+    human_oversight_summary: str | None = None
+
+
+class SystemDossierResponse(SystemDossierInput):
+    id: UUID
+    case_id: UUID
+    created_at: datetime
+    updated_at: datetime
+
+
+class CaseCreateRequest(BaseModel):
+    title: str = Field(min_length=3)
+    description: str | None = None
+    owner_team: str = Field(min_length=2)
+    policy_snapshot_slug: str | None = None
+    dossier: SystemDossierInput
+
+
+class CaseUpdateRequest(BaseModel):
+    title: str | None = Field(default=None, min_length=3)
+    description: str | None = None
+    owner_team: str | None = Field(default=None, min_length=2)
+    status: CaseStatus | None = None
+    policy_snapshot_slug: str | None = None
+    dossier: SystemDossierInput | None = None
+
+
+class CaseSummary(BaseModel):
+    id: UUID
+    title: str
+    status: CaseStatus
+    owner_team: str
+    policy_snapshot_slug: str | None = None
+    system_name: str
+    actor_role: ActorRole
+    created_at: datetime
+    updated_at: datetime
+
+
+class CaseDetail(CaseSummary):
+    description: str | None = None
+    dossier: SystemDossierResponse
 
 
 class LivenessResponse(BaseModel):

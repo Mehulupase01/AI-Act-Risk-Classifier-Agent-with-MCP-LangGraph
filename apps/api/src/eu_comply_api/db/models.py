@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
-from sqlalchemy import Boolean, ForeignKey, JSON, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from eu_comply_api.db.base import (
@@ -20,9 +20,10 @@ class OrganizationRecord(UUIDPrimaryKeyMixin, TimestampMixin, NamedSlugMixin, Ba
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
-    users: Mapped[list["UserRecord"]] = relationship(back_populates="organization")
-    api_clients: Mapped[list["ApiClientRecord"]] = relationship(back_populates="organization")
-    runtime_profile: Mapped["LLMRuntimeProfileRecord | None"] = relationship(
+    users: Mapped[list[UserRecord]] = relationship(back_populates="organization")
+    api_clients: Mapped[list[ApiClientRecord]] = relationship(back_populates="organization")
+    cases: Mapped[list[CaseRecord]] = relationship(back_populates="organization")
+    runtime_profile: Mapped[LLMRuntimeProfileRecord | None] = relationship(
         back_populates="organization",
         uselist=False,
     )
@@ -90,3 +91,108 @@ class LLMRuntimeProfileRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedM
     metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
 
     organization: Mapped[OrganizationRecord] = relationship(back_populates="runtime_profile")
+
+
+class CaseRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedMixin, Base):
+    __tablename__ = "cases"
+
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(64), default="draft", nullable=False, index=True)
+    owner_team: Mapped[str] = mapped_column(String(120), nullable=False)
+    policy_snapshot_slug: Mapped[str | None] = mapped_column(String(120), nullable=True)
+
+    organization: Mapped[OrganizationRecord] = relationship(back_populates="cases")
+    dossier: Mapped[SystemDossierRecord | None] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        uselist=False,
+    )
+
+
+class SystemDossierRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "system_dossiers"
+    __table_args__ = (UniqueConstraint("case_id", name="uq_system_dossiers_case_id"),)
+
+    case_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cases.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    system_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    actor_role: Mapped[str] = mapped_column(String(64), nullable=False)
+    sector: Mapped[str] = mapped_column(String(120), nullable=False)
+    intended_purpose: Mapped[str] = mapped_column(Text, nullable=False)
+    model_provider: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    model_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    uses_generative_ai: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    affects_natural_persons: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    geographic_scope: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    deployment_channels: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    human_oversight_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    case: Mapped[CaseRecord] = relationship(back_populates="dossier")
+
+
+class PolicySourceRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "policy_sources"
+
+    slug: Mapped[str] = mapped_column(String(120), nullable=False, unique=True, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    source_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    authority: Mapped[str] = mapped_column(String(120), nullable=False)
+    url: Mapped[str] = mapped_column(String(500), nullable=False)
+    status: Mapped[str] = mapped_column(String(64), nullable=False)
+
+    fragments: Mapped[list[NormFragmentRecord]] = relationship(back_populates="source")
+
+
+class PolicySnapshotRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "policy_snapshots"
+
+    slug: Mapped[str] = mapped_column(String(120), nullable=False, unique=True, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    jurisdiction: Mapped[str] = mapped_column(String(64), nullable=False)
+    effective_from: Mapped[str] = mapped_column(String(40), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    source_ids: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+
+    fragments: Mapped[list[NormFragmentRecord]] = relationship(
+        back_populates="snapshot",
+        cascade="all, delete-orphan",
+        order_by="NormFragmentRecord.order_index",
+    )
+
+
+class NormFragmentRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "norm_fragments"
+    __table_args__ = (
+        UniqueConstraint(
+            "snapshot_id",
+            "fragment_type",
+            "citation",
+            name="uq_norm_fragments_snapshot_fragment_type_citation",
+        ),
+    )
+
+    snapshot_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("policy_snapshots.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    source_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("policy_sources.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    fragment_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    citation: Mapped[str] = mapped_column(String(120), nullable=False)
+    heading: Mapped[str] = mapped_column(String(255), nullable=False)
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    actor_scope: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    tags: Mapped[list[str]] = mapped_column(JSON, default=list, nullable=False)
+    order_index: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+    snapshot: Mapped[PolicySnapshotRecord] = relationship(back_populates="fragments")
+    source: Mapped[PolicySourceRecord] = relationship(back_populates="fragments")

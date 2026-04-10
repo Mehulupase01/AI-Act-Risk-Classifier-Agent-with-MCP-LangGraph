@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import UUID
 
@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 
 from eu_comply_api.config import Settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 ALGORITHM = "HS256"
 
 
@@ -28,7 +28,7 @@ def create_access_token(
     additional_claims: dict[str, Any] | None = None,
 ) -> tuple[str, int]:
     expire_delta = timedelta(minutes=settings.access_token_expire_minutes)
-    expires_at = datetime.now(timezone.utc) + expire_delta
+    expires_at = datetime.now(UTC) + expire_delta
     payload: dict[str, Any] = {
         "sub": subject,
         "actor_type": actor_type,
