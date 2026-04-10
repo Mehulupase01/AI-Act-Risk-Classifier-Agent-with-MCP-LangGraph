@@ -62,6 +62,13 @@ class AssessmentRunStatus(StrEnum):
     FAILED = "failed"
 
 
+class WorkflowRunStatus(StrEnum):
+    RUNNING = "running"
+    COMPLETED = "completed"
+    PENDING_REVIEW = "pending_review"
+    FAILED = "failed"
+
+
 class HealthStatus(StrEnum):
     OK = "ok"
     DEGRADED = "degraded"
@@ -351,6 +358,20 @@ class AssessmentRunDetail(AssessmentRunSummary):
     conflict_fields: list[str]
     hits: list[RuleHit]
     obligations: list[ObligationItem]
+
+
+class WorkflowRunSummary(BaseModel):
+    id: UUID
+    case_id: UUID
+    assessment_run_id: UUID | None = None
+    status: WorkflowRunStatus
+    review_required: bool
+    review_reason: str | None = None
+    created_at: datetime
+
+
+class WorkflowRunDetail(WorkflowRunSummary):
+    state: dict[str, object]
 
 
 class LivenessResponse(BaseModel):

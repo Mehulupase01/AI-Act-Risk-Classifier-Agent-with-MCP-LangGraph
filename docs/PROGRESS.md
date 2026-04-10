@@ -14,21 +14,21 @@
 - Case registry and dossier foundation completed with CRUD APIs and Alembic migration `004_cases_and_dossiers`.
 - Artifact intake and document intelligence foundation completed with upload/process APIs, local artifact storage, parser/chunking flows, extracted fact persistence, and Alembic migration `005_artifact_intelligence_foundation`.
 - Deterministic assessment and obligation engine foundation completed with assessment persistence, case-level assessment APIs, fact merging, conflict-aware outcomes, and Alembic migration `006_assessment_runs`.
+- LangGraph workflow and governed review foundation completed with workflow-run APIs, persisted workflow state, review routing, and Alembic migration `007_workflow_runs`.
 
 ## In Progress
 
-- LangGraph workflow and governed review foundation
+- Operator interfaces and review surfaces
 
 ## Verified
 
 - `uv run --directory apps/api ruff check .`
-- `uv run --directory apps/api pytest` -> `20 passed`
+- `uv run --directory apps/api pytest` -> `22 passed`
 - `npm run check`
-- `uv run --directory apps/api alembic upgrade head` against a clean SQLite verification database through `006_assessment_runs`
+- `uv run --directory apps/api alembic upgrade head` against a clean SQLite verification database through `007_workflow_runs`
 - `uv run --directory apps/api python -m eu_comply_api.tools.seed_policy`
 
 ## Pending
 
-- LangGraph workflow
 - MCP servers
 - Reporting, benchmarks, hardening, release

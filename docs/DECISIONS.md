@@ -28,6 +28,8 @@
 - Persist extracted facts and mark cross-artifact conflicts early so later review workflows have explicit disagreement signals.
 - Persist assessment runs as first-class records with facts, hits, conflicts, and obligations so case history remains explainable.
 - Prefer conservative `needs_more_information` outcomes when fact conflicts would undermine deterministic decision quality.
+- Persist workflow runs separately from assessment runs so orchestration state and decision state remain distinguishable.
+- Route prohibited and conflict-heavy outcomes into explicit review-required workflow states instead of pretending the machine run can close the case autonomously.
 
 ## Delivery
 

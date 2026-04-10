@@ -113,6 +113,11 @@ class CaseRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedMixin, Base):
         cascade="all, delete-orphan",
         order_by="AssessmentRunRecord.created_at.desc()",
     )
+    workflow_runs: Mapped[list[WorkflowRunRecord]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        order_by="WorkflowRunRecord.created_at.desc()",
+    )
     dossier: Mapped[SystemDossierRecord | None] = relationship(
         back_populates="case",
         cascade="all, delete-orphan",
@@ -244,6 +249,27 @@ class AssessmentRunRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
 
     case: Mapped[CaseRecord] = relationship(back_populates="assessment_runs")
+
+
+class WorkflowRunRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "workflow_runs"
+
+    case_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cases.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    assessment_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("assessment_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    status: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    review_required: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    review_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    state_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+    case: Mapped[CaseRecord] = relationship(back_populates="workflow_runs")
 
 
 class PolicySourceRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):

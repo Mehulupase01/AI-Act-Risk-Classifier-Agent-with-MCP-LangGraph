@@ -21,6 +21,7 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
   - case registry and dossier CRUD endpoints
   - artifact upload, retrieval, and processing endpoints
   - case-level assessment run endpoints
+  - workflow-run endpoints driven by LangGraph
   - org-scoped runtime configuration
   - provider discovery and model discovery plumbing
   - seeded policy source access
@@ -29,10 +30,11 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
   - rule-pack list/detail APIs and deterministic service-level evaluation
   - extracted fact persistence and conflict marking
   - persisted assessment runs with obligation mapping
+  - review-required workflow states for conflicted or prohibited outcomes
 - The current frontend surface includes the branded landing page and the first analyst-console route skeleton.
 
 ## Immediate Architecture Focus
 
-- wrap deterministic assessments in a governed LangGraph workflow
-- add pause and review behavior around conflicts, missing facts, and sensitive outcomes
-- start building reviewer-facing lifecycle control on top of the persisted assessment runs
+- build frontend/operator surfaces on top of the now-persisted cases, artifacts, assessments, and workflow runs
+- add explicit reviewer actions and approval flows
+- prepare the backend for MCP, reporting, and export layers
