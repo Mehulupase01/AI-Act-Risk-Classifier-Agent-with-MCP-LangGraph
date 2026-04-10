@@ -33,6 +33,9 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
   - review-required workflow states for conflicted or prohibited outcomes
   - explicit review-decision APIs and approval-ledger persistence
   - exportable report generation across case, evidence, assessment, workflow, and review state
+  - first-party MCP servers for policy, dossier, assessment, and reassessment access
+  - tenant-scoped connector registry APIs with auditable sync-run history
+  - case-linked reassessment triggers that can optionally auto-run governed workflows
 - The current frontend surface now includes:
   - sign-in against the live backend
   - case creation and selection
@@ -44,6 +47,6 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
 
 ## Immediate Architecture Focus
 
-- implement first-party MCP server surfaces for policy, dossier, and assessment access
-- add connector and reassessment-trigger scaffolding without weakening the deterministic core
-- deepen report/export work into audit-pack quality after the integration layer is in place
+- deepen report/export work into audit-pack quality now that MCP, connector, and reassessment surfaces are in place
+- broaden benchmark, adversarial, and operations coverage around the new integration surfaces
+- continue toward release hardening without weakening the deterministic core

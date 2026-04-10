@@ -42,6 +42,7 @@ npm --prefix apps/web run build
 - Phase 9 LangGraph workflow and governed review foundation is verified with workflow-run APIs, persisted workflow state, and review gating for sensitive or conflicted outcomes.
 - Phase 10 operator interface foundation is verified with a live analyst console that can sign in, create cases, upload/process evidence, and trigger assessments and workflows.
 - Phase 11 reviewer approval and reporting foundation is verified with approval-ledger persistence, review/report APIs, approval-aware case and workflow state updates, and live console actions for recording reviews and exporting reports.
+- Phase 12 integration foundation is verified with first-party MCP servers, persisted connector registry APIs, auditable connector sync runs, and case-linked reassessment triggers that can optionally auto-run governed workflows.
 
 ## Update Rule
 

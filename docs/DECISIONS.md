@@ -34,6 +34,10 @@
 - Persist review decisions separately from machine-run records so the platform can distinguish human approval from machine output without mutating the underlying assessment history.
 - Let approved reviews update case and workflow closure state while keeping the original machine assessment immutable for auditability.
 - Generate exportable reports from persisted case, evidence, workflow, and review records rather than from transient frontend state.
+- Mount first-party MCP servers inside the main FastAPI application and explicitly run their session managers from the root lifespan so streamable HTTP transport works reliably in tests and local development.
+- Model enterprise integrations as tenant-scoped connector records plus auditable sync-run history instead of hiding external changes behind ad hoc webhook handlers.
+- Persist reassessment triggers separately from workflow runs so external change events, manual requests, and workflow execution history remain distinguishable.
+- Allow connector-driven reassessments to auto-run governed workflows, but keep review approval actions outside the MCP write surface.
 
 ## Delivery
 

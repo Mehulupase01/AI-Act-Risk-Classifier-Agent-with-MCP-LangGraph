@@ -79,6 +79,43 @@ class ReportFormat(StrEnum):
     MARKDOWN = "markdown"
 
 
+class ConnectorKind(StrEnum):
+    MODEL_REGISTRY = "model_registry"
+    DOCUMENT_REPOSITORY = "document_repository"
+    GRC_TICKETING = "grc_ticketing"
+    WEBHOOK = "webhook"
+
+
+class ConnectorStatus(StrEnum):
+    ACTIVE = "active"
+    PAUSED = "paused"
+
+
+class ConnectorSyncStatus(StrEnum):
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+class ReassessmentReason(StrEnum):
+    MANUAL_REQUEST = "manual_request"
+    MODEL_CHANGED = "model_changed"
+    DEPLOYMENT_CHANGED = "deployment_changed"
+    EVIDENCE_UPDATED = "evidence_updated"
+    POLICY_UPDATED = "policy_updated"
+    INCIDENT_REPORTED = "incident_reported"
+
+
+class ReassessmentSource(StrEnum):
+    MANUAL = "manual"
+    CONNECTOR_SYNC = "connector_sync"
+
+
+class ReassessmentStatus(StrEnum):
+    PENDING = "pending"
+    PROCESSED = "processed"
+    FAILED = "failed"
+
+
 class HealthStatus(StrEnum):
     OK = "ok"
     DEGRADED = "degraded"
@@ -402,6 +439,113 @@ class ReviewDecisionSummary(BaseModel):
     rationale: str
     approved_outcome: AssessmentOutcome | None = None
     created_at: datetime
+
+
+class ConnectorConfigCreateRequest(BaseModel):
+    name: str = Field(min_length=3)
+    slug: str = Field(min_length=3, pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+    kind: ConnectorKind
+    description: str | None = None
+    status: ConnectorStatus = ConnectorStatus.ACTIVE
+    config: dict[str, object] = Field(default_factory=dict)
+
+
+class ConnectorConfigUpdateRequest(BaseModel):
+    name: str | None = Field(default=None, min_length=3)
+    description: str | None = None
+    status: ConnectorStatus | None = None
+    config: dict[str, object] | None = None
+
+
+class ConnectorConfigSummary(BaseModel):
+    id: UUID
+    name: str
+    slug: str
+    kind: ConnectorKind
+    status: ConnectorStatus
+    description: str | None = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class ConnectorConfigDetail(ConnectorConfigSummary):
+    config: dict[str, object]
+    supported_reasons: list[ReassessmentReason]
+
+
+class ConnectorEventInput(BaseModel):
+    case_id: UUID | None = None
+    reason: ReassessmentReason
+    title: str = Field(min_length=3)
+    detail: str | None = None
+    external_reference: str | None = None
+    payload: dict[str, object] = Field(default_factory=dict)
+
+
+class ConnectorSyncRequest(BaseModel):
+    case_id: UUID | None = None
+    events: list[ConnectorEventInput] = Field(default_factory=list)
+    auto_process_triggers: bool = True
+
+
+class ReassessmentTriggerCreateRequest(BaseModel):
+    reason: ReassessmentReason = ReassessmentReason.MANUAL_REQUEST
+    title: str = Field(min_length=3)
+    detail: str | None = None
+    payload: dict[str, object] = Field(default_factory=dict)
+    auto_process: bool = True
+
+
+class ReassessmentTriggerSummary(BaseModel):
+    id: UUID
+    case_id: UUID
+    connector_id: UUID | None = None
+    sync_run_id: UUID | None = None
+    workflow_run_id: UUID | None = None
+    reason: ReassessmentReason
+    source: ReassessmentSource
+    status: ReassessmentStatus
+    title: str
+    detail: str | None = None
+    requested_by: str
+    created_at: datetime
+    processed_at: datetime | None = None
+
+
+class ReassessmentTriggerDetail(ReassessmentTriggerSummary):
+    payload: dict[str, object]
+
+
+class ConnectorSyncSummary(BaseModel):
+    id: UUID
+    connector_id: UUID
+    case_id: UUID | None = None
+    status: ConnectorSyncStatus
+    initiated_by: str
+    event_count: int
+    trigger_count: int
+    processed_trigger_count: int
+    unmapped_event_count: int
+    created_at: datetime
+    completed_at: datetime | None = None
+
+
+class ConnectorSyncDetail(ConnectorSyncSummary):
+    request_payload: dict[str, object]
+    result: dict[str, object]
+
+
+class ConnectorSyncResponse(BaseModel):
+    sync_run: ConnectorSyncDetail
+    triggers: list[ReassessmentTriggerSummary]
+
+
+class CaseWorkspaceSnapshot(BaseModel):
+    case: CaseDetail
+    artifacts: list[ArtifactDetail]
+    assessments: list[AssessmentRunDetail]
+    workflows: list[WorkflowRunDetail]
+    reviews: list[ReviewDecisionSummary]
 
 
 class ReportExportRequest(BaseModel):

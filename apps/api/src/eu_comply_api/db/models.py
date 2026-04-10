@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
 from typing import Any
 
 from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String, Text, UniqueConstraint
@@ -23,6 +24,11 @@ class OrganizationRecord(UUIDPrimaryKeyMixin, TimestampMixin, NamedSlugMixin, Ba
     users: Mapped[list[UserRecord]] = relationship(back_populates="organization")
     api_clients: Mapped[list[ApiClientRecord]] = relationship(back_populates="organization")
     cases: Mapped[list[CaseRecord]] = relationship(back_populates="organization")
+    connectors: Mapped[list[ConnectorRecord]] = relationship(
+        back_populates="organization",
+        cascade="all, delete-orphan",
+        order_by="ConnectorRecord.created_at.desc()",
+    )
     runtime_profile: Mapped[LLMRuntimeProfileRecord | None] = relationship(
         back_populates="organization",
         uselist=False,
@@ -122,6 +128,16 @@ class CaseRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedMixin, Base):
         back_populates="case",
         cascade="all, delete-orphan",
         order_by="ReviewDecisionRecord.created_at.desc()",
+    )
+    connector_sync_runs: Mapped[list[ConnectorSyncRunRecord]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        order_by="ConnectorSyncRunRecord.created_at.desc()",
+    )
+    reassessment_triggers: Mapped[list[ReassessmentTriggerRecord]] = relationship(
+        back_populates="case",
+        cascade="all, delete-orphan",
+        order_by="ReassessmentTriggerRecord.created_at.desc()",
     )
     dossier: Mapped[SystemDossierRecord | None] = relationship(
         back_populates="case",
@@ -305,6 +321,103 @@ class ReviewDecisionRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     case: Mapped[CaseRecord] = relationship(back_populates="reviews")
     assessment_run: Mapped[AssessmentRunRecord | None] = relationship(back_populates="reviews")
     workflow_run: Mapped[WorkflowRunRecord | None] = relationship(back_populates="reviews")
+
+
+class ConnectorRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedMixin, Base):
+    __tablename__ = "connectors"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "slug", name="uq_connectors_org_slug"),
+    )
+
+    slug: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    kind: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    status: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    config_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+    organization: Mapped[OrganizationRecord] = relationship(back_populates="connectors")
+    sync_runs: Mapped[list[ConnectorSyncRunRecord]] = relationship(
+        back_populates="connector",
+        cascade="all, delete-orphan",
+        order_by="ConnectorSyncRunRecord.created_at.desc()",
+    )
+    reassessment_triggers: Mapped[list[ReassessmentTriggerRecord]] = relationship(
+        back_populates="connector",
+        order_by="ReassessmentTriggerRecord.created_at.desc()",
+    )
+
+
+class ConnectorSyncRunRecord(UUIDPrimaryKeyMixin, TimestampMixin, TenantScopedMixin, Base):
+    __tablename__ = "connector_sync_runs"
+
+    connector_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("connectors.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    case_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("cases.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    initiated_by: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    event_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    trigger_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    processed_trigger_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    unmapped_event_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    request_payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    result_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(nullable=True)
+
+    connector: Mapped[ConnectorRecord] = relationship(back_populates="sync_runs")
+    case: Mapped[CaseRecord | None] = relationship(back_populates="connector_sync_runs")
+    reassessment_triggers: Mapped[list[ReassessmentTriggerRecord]] = relationship(
+        back_populates="sync_run",
+        order_by="ReassessmentTriggerRecord.created_at.desc()",
+    )
+
+
+class ReassessmentTriggerRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    __tablename__ = "reassessment_triggers"
+
+    case_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("cases.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    connector_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("connectors.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    sync_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("connector_sync_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    workflow_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("workflow_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    reason: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    detail: Mapped[str | None] = mapped_column(Text, nullable=True)
+    requested_by: Mapped[str] = mapped_column(String(255), nullable=False)
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    processed_at: Mapped[datetime | None] = mapped_column(nullable=True)
+
+    case: Mapped[CaseRecord] = relationship(back_populates="reassessment_triggers")
+    connector: Mapped[ConnectorRecord | None] = relationship(
+        back_populates="reassessment_triggers"
+    )
+    sync_run: Mapped[ConnectorSyncRunRecord | None] = relationship(
+        back_populates="reassessment_triggers"
+    )
 
 
 class PolicySourceRecord(UUIDPrimaryKeyMixin, TimestampMixin, Base):

@@ -5,8 +5,10 @@ from eu_comply_api.api.routes import (
     assessments,
     auth,
     cases,
+    connectors,
     health,
     policy,
+    reassessments,
     reports,
     reviews,
     rules,
@@ -22,7 +24,9 @@ api_router.include_router(artifacts.router, tags=["artifacts"])
 api_router.include_router(assessments.router, tags=["assessments"])
 api_router.include_router(workflows.router, tags=["workflows"])
 api_router.include_router(reviews.router, tags=["reviews"])
+api_router.include_router(reassessments.router, tags=["reassessments"])
 api_router.include_router(reports.router, tags=["reports"])
+api_router.include_router(connectors.router, tags=["connectors"])
 api_router.include_router(runtime.router, prefix="/runtime", tags=["runtime"])
 api_router.include_router(policy.router, tags=["policy"])
 api_router.include_router(rules.router, tags=["rules"])

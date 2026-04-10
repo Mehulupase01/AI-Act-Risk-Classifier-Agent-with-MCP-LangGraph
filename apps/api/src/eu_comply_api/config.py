@@ -57,6 +57,8 @@ class Settings(BaseSettings):
 
     request_timeout_seconds: float = Field(default=30.0, ge=1.0)
     runtime_discovery_timeout_seconds: float = Field(default=15.0, ge=1.0)
+    mcp_enabled: bool = True
+    mcp_default_org_slug: str | None = None
 
 
 @lru_cache(maxsize=1)

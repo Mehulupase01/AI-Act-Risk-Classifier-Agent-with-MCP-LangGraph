@@ -35,7 +35,8 @@ dependencies = [
   "sqlalchemy>=2.0.40",
   "structlog>=25.3.0",
   "tenacity>=9.1.2",
-  "uvicorn[standard]>=0.34.2"
+  "uvicorn[standard]>=0.34.2",
+  "mcp[cli]>=1.27.0",
 ]
 
 [project.optional-dependencies]

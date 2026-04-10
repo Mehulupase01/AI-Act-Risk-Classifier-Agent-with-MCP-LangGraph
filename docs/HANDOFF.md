@@ -13,13 +13,13 @@
 - Phase 9 LangGraph workflow and governed review foundation is complete and verified.
 - Phase 10 operator interface foundation is complete and verified.
 - Phase 11 reviewer approval and reporting foundation is complete and verified.
+- Phase 12 integration foundation is complete and verified.
 
 ## Next Critical Steps
 
-1. Start the MCP server foundation so policy, dossier, and assessment context are available through first-party MCP interfaces.
-2. Introduce the first connector and reassessment trigger scaffolding instead of keeping the platform isolated from external systems.
-3. Expand report/export work into audit-pack depth after MCP and connector surfaces are in place.
-4. Keep migrations, tests, and continuity docs aligned as governance and integration surfaces expand.
+1. Expand report/export work into audit-pack depth so approved assessments can ship with stronger evidence bundles and reviewer-facing artifacts.
+2. Add broader evaluation coverage and adversarial benchmark scenarios around connectors, reassessment automation, and MCP-assisted operations.
+3. Keep migrations, tests, and continuity docs aligned as the release-hardening phases begin.
 
 ## Last Verified Commands
 
