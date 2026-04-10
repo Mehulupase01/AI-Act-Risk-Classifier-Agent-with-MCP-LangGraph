@@ -43,6 +43,8 @@
 - Keep benchmark fixtures in-repo and executable through a CLI so rule regressions can be checked without needing a live frontend or manual API exercise.
 - Expose metrics as org-scoped authenticated Prometheus-style text instead of a public global endpoint so operational visibility does not leak cross-tenant counts.
 - Make readiness checks exercise real dependencies such as database connectivity, seeded policy presence, and artifact storage writability rather than returning static configuration-only status.
+- Package the web application with Next.js standalone output so the runtime container can stay small and deployment wiring remains straightforward.
+- Keep Docker build context at the repo root so API fixtures, benchmark data, and shared assets remain available during image builds.
 
 ## Delivery
 

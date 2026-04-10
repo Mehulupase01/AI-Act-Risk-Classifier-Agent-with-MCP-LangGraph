@@ -16,12 +16,13 @@
 - Phase 12 integration foundation is complete and verified.
 - Phase 13 audit-pack expansion is complete and verified.
 - Phase 14 evaluation and hardening foundation is complete and verified.
+- Phase 15 release packaging is complete at the code and documentation layer.
 
 ## Next Critical Steps
 
-1. Finish release packaging and deployment guidance so the repo is honest and runnable outside the local dev loop.
+1. Run `docker build` for the API and web images once Docker Desktop or another Docker daemon is available.
 2. Expand the benchmark fixture and adversarial coverage beyond the initial golden set as part of release-quality validation.
-3. Keep migrations, tests, docs, and release notes aligned as the final packaging phase lands.
+3. Keep release notes and deployment docs aligned with any post-packaging fixes.
 
 ## Last Verified Commands
 
@@ -34,4 +35,5 @@ $env:EU_COMPLY_DATABASE_URL='sqlite+aiosqlite:///D:/Mehul-Projects/AI Act Risk C
 uv run --directory apps/api alembic upgrade head
 uv run --directory apps/api python -m eu_comply_api.tools.seed_policy
 uv run --directory apps/api python -m eu_comply_api.tools.run_benchmarks
+docker compose -f ops/docker/compose.full.yml config
 ```

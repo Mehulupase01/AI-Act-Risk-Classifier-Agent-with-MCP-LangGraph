@@ -46,6 +46,7 @@ npm --prefix apps/web run build
 - Phase 12 integration foundation is verified with first-party MCP servers, persisted connector registry APIs, auditable connector sync runs, and case-linked reassessment triggers that can optionally auto-run governed workflows.
 - Phase 13 audit-pack expansion is verified with bundled ZIP audit exports, policy fragment inclusion, reassessment history in report artifacts, MCP audit-pack access, and a live console action for exporting the archive.
 - Phase 14 evaluation and hardening is verified with a golden benchmark fixture and CLI, org-scoped metrics output, and readiness checks for database, bootstrap org, policy snapshots, and artifact storage.
+- Phase 15 release packaging is implemented with API/web Dockerfiles, full-stack compose, env templates, backup and restore scripts, a deployment guide, and a rewritten flagship README. Compose config is verified; direct Docker image builds still require a running local Docker daemon.
 
 ## Update Rule
 
