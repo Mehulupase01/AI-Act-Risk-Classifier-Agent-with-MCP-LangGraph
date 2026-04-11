@@ -16,13 +16,13 @@
 - Phase 12 integration foundation is complete and verified.
 - Phase 13 audit-pack expansion is complete and verified.
 - Phase 14 evaluation and hardening foundation is complete and verified.
-- Phase 15 release packaging is complete at the code and documentation layer.
+- Phase 15 release packaging is complete and verified end to end.
 
 ## Next Critical Steps
 
-1. Run `docker build` for the API and web images once Docker Desktop or another Docker daemon is available.
-2. Expand the benchmark fixture and adversarial coverage beyond the initial golden set as part of release-quality validation.
-3. Keep release notes and deployment docs aligned with any post-packaging fixes.
+1. Expand the deterministic rule library beyond the current baseline coverage and keep the policy snapshot fixtures in step with that growth.
+2. Grow the benchmark and adversarial corpus beyond the current five-case golden set before making broader legal-performance claims.
+3. Keep deployment, release, and architecture docs aligned with any future product-depth work.
 
 ## Last Verified Commands
 
@@ -35,5 +35,8 @@ $env:EU_COMPLY_DATABASE_URL='sqlite+aiosqlite:///D:/Mehul-Projects/AI Act Risk C
 uv run --directory apps/api alembic upgrade head
 uv run --directory apps/api python -m eu_comply_api.tools.seed_policy
 uv run --directory apps/api python -m eu_comply_api.tools.run_benchmarks
+docker build -f apps/api/Dockerfile -t eu-comply-api:verify .
+docker build -f apps/web/Dockerfile -t eu-comply-web:verify .
+docker compose -f ops/docker/compose.full.yml build
 docker compose -f ops/docker/compose.full.yml config
 ```

@@ -20,11 +20,11 @@
 - MCP, connector, and reassessment foundation completed with mounted first-party MCP servers, connector registry APIs, auditable sync runs, reassessment trigger APIs, and Alembic migration `009_connector_reassessment_foundation`.
 - Audit-pack expansion completed with ZIP audit bundles, manifest generation, policy fragment exports, reassessment history capture, MCP audit-pack tooling, and analyst-console export actions.
 - Evaluation and hardening foundation completed with a golden-case benchmark fixture, benchmark CLI, real readiness checks, and org-scoped metrics export.
-- Release packaging completed with API/web Dockerfiles, full-stack compose, env templates, backup/restore scripts, deployment docs, release checklist, and a rewritten flagship README.
+- Release packaging completed with API/web Dockerfiles, full-stack compose, env templates, backup/restore scripts, deployment docs, release checklist, verified Docker image builds, verified compose build, and a flagship-level rewritten README.
 
 ## In Progress
 
-- Environment-level Docker image build verification
+- No active implementation gaps are open in the current flagship baseline.
 
 ## Verified
 
@@ -35,8 +35,11 @@
 - `uv run --directory apps/api alembic upgrade head` against a clean SQLite verification database through `009_connector_reassessment_foundation`
 - `uv run --directory apps/api python -m eu_comply_api.tools.seed_policy` against the SQLite verification database
 - `uv run --directory apps/api python -m eu_comply_api.tools.run_benchmarks` -> `accuracy: 1.0`
+- `docker build -f apps/api/Dockerfile -t eu-comply-api:verify .`
+- `docker build -f apps/web/Dockerfile -t eu-comply-web:verify .`
+- `docker compose -f ops/docker/compose.full.yml build`
 - `docker compose -f ops/docker/compose.full.yml config`
 
 ## Pending
 
-- Docker image build verification with an active local Docker daemon
+- Broader legal coverage, larger benchmark depth, and expanded adversarial validation beyond the current baseline fixture set.

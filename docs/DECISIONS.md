@@ -45,6 +45,7 @@
 - Make readiness checks exercise real dependencies such as database connectivity, seeded policy presence, and artifact storage writability rather than returning static configuration-only status.
 - Package the web application with Next.js standalone output so the runtime container can stay small and deployment wiring remains straightforward.
 - Keep Docker build context at the repo root so API fixtures, benchmark data, and shared assets remain available during image builds.
+- Keep flagship documentation ambitious in depth but honest about baseline legal coverage so README quality never depends on inflated product claims.
 
 ## Delivery
 

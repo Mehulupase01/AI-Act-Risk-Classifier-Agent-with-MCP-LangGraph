@@ -39,7 +39,7 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
   - ZIP audit-pack generation with manifest, workspace snapshot, policy snapshot, and referenced fragments
   - benchmark harness plus CLI-driven regression checks for deterministic rule behavior
   - authenticated org-scoped metrics and real readiness checks for runtime health
-  - release packaging with API/web containers, full-stack compose, backup scripts, and deployment docs
+  - release packaging with API/web containers, full-stack compose, backup scripts, deployment docs, and verified Docker image builds
 - The current frontend surface now includes:
   - sign-in against the live backend
   - case creation and selection
@@ -52,5 +52,6 @@ EU-Comply is an AI governance and EU AI Act assessment platform with:
 
 ## Immediate Architecture Focus
 
-- run environment-level Docker image verification when a daemon is available
-- keep broadening benchmark, adversarial, and operations coverage as part of release validation
+- broaden the deterministic legal coverage beyond the current baseline rule pack
+- increase benchmark and adversarial depth so quality claims can scale with legal coverage
+- continue keeping the README and deployment docs aligned with verified product behavior

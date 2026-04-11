@@ -10,6 +10,10 @@ npm run build
 $env:EU_COMPLY_DATABASE_URL='sqlite+aiosqlite:///D:/Mehul-Projects/AI Act Risk Classifier Agent with MCP + LangGraph/apps/api/alembic-verify.db'
 uv run --directory apps/api alembic upgrade head
 uv run --directory apps/api python -m eu_comply_api.tools.seed_policy
+docker build -f apps/api/Dockerfile -t eu-comply-api:verify .
+docker build -f apps/web/Dockerfile -t eu-comply-web:verify .
+docker compose -f ops/docker/compose.full.yml build
+docker compose -f ops/docker/compose.full.yml config
 ```
 
 ## Current Verification State
@@ -23,6 +27,9 @@ uv run --directory apps/api python -m eu_comply_api.tools.seed_policy
 - The benchmark CLI runs successfully against the in-repo golden fixture with `accuracy = 1.0`.
 - The live analyst console review and export code passes both lint and production build validation.
 - The full-stack compose file resolves successfully with `docker compose ... config`.
+- The API Docker image builds successfully against a live Docker daemon.
+- The web Docker image builds successfully against a live Docker daemon.
+- The full-stack compose build succeeds against a live Docker daemon.
 - Mounted MCP server tests now pass against the FastAPI app using streamable HTTP transport.
 - Connector sync and reassessment route tests pass, including auto-processed workflow creation and unsupported-event rejection paths.
 - Audit-pack export tests now pass, including ZIP manifest validation and bundled workspace/report artifacts.
@@ -31,4 +38,4 @@ uv run --directory apps/api python -m eu_comply_api.tools.seed_policy
 ## Notes
 
 - SQLite verification now runs cleanly through the connector and reassessment migration path.
-- Direct Docker image builds could not be executed in this session because the local Docker daemon was unavailable.
+- The previous Docker-daemon verification gap is closed.
