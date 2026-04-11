@@ -1,6 +1,6 @@
 """connector and reassessment foundation
 
-Revision ID: 009_connector_reassessment_foundation
+Revision ID: 009_connector_reassessment
 Revises: 008_review_decisions
 Create Date: 2026-04-10 22:20:00
 """
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "009_connector_reassessment_foundation"
+revision: str = "009_connector_reassessment"
 down_revision: str | None = "008_review_decisions"
 branch_labels: Sequence[str] | None = None
 depends_on: Sequence[str] | None = None

@@ -46,6 +46,7 @@
 - Package the web application with Next.js standalone output so the runtime container can stay small and deployment wiring remains straightforward.
 - Keep Docker build context at the repo root so API fixtures, benchmark data, and shared assets remain available during image builds.
 - Keep flagship documentation ambitious in depth but honest about baseline legal coverage so README quality never depends on inflated product claims.
+- Keep Alembic revision identifiers within PostgreSQL-safe length bounds so containerized deployments do not fail on the default version-table column size.
 
 ## Delivery
 

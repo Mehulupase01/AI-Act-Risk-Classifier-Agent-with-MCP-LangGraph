@@ -24,6 +24,13 @@
 2. Grow the benchmark and adversarial corpus beyond the current five-case golden set before making broader legal-performance claims.
 3. Keep deployment, release, and architecture docs aligned with any future product-depth work.
 
+## Active Local Deployment
+
+- The compose stack is currently running locally.
+- Web: `http://127.0.0.1:3000`
+- API: `http://127.0.0.1:8001`
+- The API port is overridden because host port `8000` is already occupied on this machine.
+
 ## Last Verified Commands
 
 ```powershell

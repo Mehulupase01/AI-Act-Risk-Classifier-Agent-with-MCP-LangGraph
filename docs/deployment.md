@@ -54,6 +54,26 @@ This starts:
 
 The API container applies Alembic migrations during startup before launching Uvicorn.
 
+### Port Overrides
+
+If default localhost ports are already in use, the compose file supports
+environment-based overrides:
+
+```powershell
+$env:EU_COMPLY_API_PORT='8001'
+$env:EU_COMPLY_WEB_PORT='3000'
+docker compose -f ops/docker/compose.full.yml up -d
+```
+
+Supported overrides currently include:
+
+- `EU_COMPLY_API_PORT`
+- `EU_COMPLY_WEB_PORT`
+- `EU_COMPLY_POSTGRES_PORT`
+- `EU_COMPLY_REDIS_PORT`
+- `EU_COMPLY_MINIO_PORT`
+- `EU_COMPLY_MINIO_CONSOLE_PORT`
+
 ## Post-Deploy Validation
 
 Run these checks after deployment:

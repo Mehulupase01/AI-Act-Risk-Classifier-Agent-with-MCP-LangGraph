@@ -1,7 +1,7 @@
 """assessment runs foundation
 
 Revision ID: 006_assessment_runs
-Revises: 005_artifact_intelligence_foundation
+Revises: 005_artifact_intelligence
 Create Date: 2026-04-10 10:20:00
 """
 
@@ -13,7 +13,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "006_assessment_runs"
-down_revision: str | None = "005_artifact_intelligence_foundation"
+down_revision: str | None = "005_artifact_intelligence"
 branch_labels: Sequence[str] | None = None
 depends_on: Sequence[str] | None = None
 

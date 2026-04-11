@@ -460,6 +460,14 @@ docker compose -f ops/docker/compose.full.yml build
 docker compose -f ops/docker/compose.full.yml up -d
 ```
 
+If default localhost ports are already occupied, the compose file now supports
+port overrides through environment variables such as:
+
+```powershell
+$env:EU_COMPLY_API_PORT='8001'
+docker compose -f ops/docker/compose.full.yml up -d
+```
+
 ### Included deployment assets
 
 - `apps/api/Dockerfile`
@@ -501,13 +509,14 @@ docker compose -f ops/docker/compose.full.yml config
 - API lint passes
 - API tests pass with `36 passed`
 - benchmark CLI passes with `accuracy = 1.0` on the in-repo golden fixture
-- Alembic upgrades cleanly through `009_connector_reassessment_foundation`
+- Alembic upgrades cleanly through `009_connector_reassessment`
 - policy seed CLI succeeds on a clean verification database
 - web lint passes
 - web production build passes
 - API Docker image build passes
 - web Docker image build passes
 - compose build passes
+- full localhost stack deployment is verified with the API reachable on `8001` and the web app reachable on `3000`
 
 ### What the current benchmark means
 

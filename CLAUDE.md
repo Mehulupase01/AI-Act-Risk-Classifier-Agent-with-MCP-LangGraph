@@ -47,6 +47,7 @@ npm --prefix apps/web run build
 - Phase 13 audit-pack expansion is verified with bundled ZIP audit exports, policy fragment inclusion, reassessment history in report artifacts, MCP audit-pack access, and a live console action for exporting the archive.
 - Phase 14 evaluation and hardening is verified with a golden benchmark fixture and CLI, org-scoped metrics output, and readiness checks for database, bootstrap org, policy snapshots, and artifact storage.
 - Phase 15 release packaging is fully verified with API/web Dockerfiles, full-stack compose, env templates, backup and restore scripts, deployment docs, and a flagship README. Direct API and web Docker image builds now pass, and the full compose build is verified against a live Docker daemon.
+- Localhost deployment is now verified end to end with the compose stack running successfully. The current local run uses `EU_COMPLY_API_PORT=8001` because port `8000` is already occupied on the host.
 
 ## Update Rule
 

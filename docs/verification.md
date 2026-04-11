@@ -22,7 +22,7 @@ docker compose -f ops/docker/compose.full.yml config
 - API tests pass: `36 passed`.
 - Web lint passes in `apps/web`.
 - The Next.js analyst console builds cleanly in production mode.
-- Alembic upgrades cleanly through `009_connector_reassessment_foundation` on a fresh verification database.
+- Alembic upgrades cleanly through `009_connector_reassessment` on a fresh verification database.
 - Policy fixture synchronization CLI runs successfully against the migrated SQLite verification database.
 - The benchmark CLI runs successfully against the in-repo golden fixture with `accuracy = 1.0`.
 - The live analyst console review and export code passes both lint and production build validation.
@@ -30,6 +30,7 @@ docker compose -f ops/docker/compose.full.yml config
 - The API Docker image builds successfully against a live Docker daemon.
 - The web Docker image builds successfully against a live Docker daemon.
 - The full-stack compose build succeeds against a live Docker daemon.
+- The full localhost stack deployment succeeds, with the API responding on `http://127.0.0.1:8001` and the web app responding on `http://127.0.0.1:3000`.
 - Mounted MCP server tests now pass against the FastAPI app using streamable HTTP transport.
 - Connector sync and reassessment route tests pass, including auto-processed workflow creation and unsupported-event rejection paths.
 - Audit-pack export tests now pass, including ZIP manifest validation and bundled workspace/report artifacts.
@@ -39,3 +40,4 @@ docker compose -f ops/docker/compose.full.yml config
 
 - SQLite verification now runs cleanly through the connector and reassessment migration path.
 - The previous Docker-daemon verification gap is closed.
+- Alembic revision identifiers were shortened where needed so PostgreSQL-based deployments no longer fail on the default `alembic_version.version_num` length constraint.

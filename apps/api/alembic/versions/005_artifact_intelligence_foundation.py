@@ -1,6 +1,6 @@
 """artifact intelligence foundation
 
-Revision ID: 005_artifact_intelligence_foundation
+Revision ID: 005_artifact_intelligence
 Revises: 004_cases_and_dossiers
 Create Date: 2026-04-10 08:00:00
 """
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "005_artifact_intelligence_foundation"
+revision: str = "005_artifact_intelligence"
 down_revision: str | None = "004_cases_and_dossiers"
 branch_labels: Sequence[str] | None = None
 depends_on: Sequence[str] | None = None
