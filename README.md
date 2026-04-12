@@ -9,8 +9,13 @@
 
 Production-grade AI governance and EU AI Act assessment platform with a deterministic policy engine, governed review workflows, first-party MCP servers, audit-pack exports, and dual runtime compatibility for `OpenRouter` and `Ollama`.
 
+Start here if you want the non-technical walkthrough:
+
+- [EU-Comply Guidebook](GUIDEBOOK.md)
+
 ## Table Of Contents
 
+- [Guidebook](#guidebook)
 - [Short Abstract](#short-abstract)
 - [Current Validated Snapshot](#current-validated-snapshot)
 - [Deep Introduction](#deep-introduction)
@@ -22,6 +27,12 @@ Production-grade AI governance and EU AI Act assessment platform with a determin
 - [Verification And Quality](#verification-and-quality)
 - [Development Notes](#development-notes)
 - [References](#references)
+
+## Guidebook
+
+For a simple step-by-step usage manual with examples, see:
+
+- [EU-Comply Guidebook](GUIDEBOOK.md)
 
 ## Short Abstract
 
@@ -39,7 +50,7 @@ This repository is built as a product, not a throwaway demo:
 - a Next.js analyst workbench operates live cases against the backend
 - LangGraph orchestrates governed assessment workflows and review gates
 - first-party MCP servers expose policy, dossier, and assessment surfaces over streamable HTTP
-- Docker packaging, compose deployment, benchmark tooling, migrations, and release docs are included
+- Docker packaging, compose deployment, benchmark tooling, and migrations are included
 
 The current implementation is already end-to-end across the major product
 surfaces. The important honesty note is that the deterministic legal content is
@@ -51,7 +62,7 @@ library is intentionally structured to expand.
 
 | Signal | Value |
 |---|---:|
-| API test suite | `36 passing tests` |
+| API test suite | `37 passing tests` |
 | Benchmark scenarios | `5` |
 | Deterministic rules in baseline pack | `3` |
 | Policy sources seeded | `3` |
@@ -482,13 +493,6 @@ docker compose -f ops/docker/compose.full.yml up -d
 - `apps/web/.env.example`
 - `ops/scripts/backup.ps1`
 - `ops/scripts/restore.ps1`
-- `docs/deployment.md`
-- `docs/release-checklist.md`
-
-For operational detail beyond the README, see:
-
-- [docs/deployment.md](docs/deployment.md)
-- [docs/release-checklist.md](docs/release-checklist.md)
 
 ## Verification And Quality
 
@@ -558,7 +562,7 @@ that toy demos usually skip:
 - benchmarks
 - health and metrics
 - Docker packaging
-- deployment documentation
+- deployment-ready packaging
 
 ### Honest next expansion path
 
@@ -576,8 +580,4 @@ next steps are:
 - [EU Regulatory Framework For AI](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai)
 - [AI Act Standardisation](https://digital-strategy.ec.europa.eu/en/policies/ai-act-standardisation)
 - [EUR-Lex AI Act Text](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1689)
-- [docs/architecture.md](docs/architecture.md)
-- [docs/deployment.md](docs/deployment.md)
-- [docs/verification.md](docs/verification.md)
-- [docs/PROGRESS.md](docs/PROGRESS.md)
-- [docs/HANDOFF.md](docs/HANDOFF.md)
+- [EU-Comply Guidebook](GUIDEBOOK.md)

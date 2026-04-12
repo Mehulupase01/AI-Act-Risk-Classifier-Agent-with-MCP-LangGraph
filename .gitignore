@@ -29,3 +29,5 @@ apps/api/.mypy_cache/
 apps/api/.ruff_cache/
 ops/data/
 tmp/
+CLAUDE.md
+docs/
