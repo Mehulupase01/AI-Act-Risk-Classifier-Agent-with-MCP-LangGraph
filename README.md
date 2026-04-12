@@ -437,6 +437,11 @@ By default, the analyst console expects the bootstrap credentials configured by
 the API environment. The current development flow uses the seeded bootstrap
 organization and admin account created during application startup.
 
+The console also accepts either:
+
+- a host-only API URL such as `http://127.0.0.1:8001`
+- or the full API prefix such as `http://127.0.0.1:8001/api/v1`
+
 ## Detailed Deployment Guide
 
 The release packaging is already implemented in this repository.

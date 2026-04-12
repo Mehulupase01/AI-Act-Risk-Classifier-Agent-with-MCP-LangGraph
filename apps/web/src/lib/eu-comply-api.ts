@@ -184,11 +184,27 @@ export type CaseCreatePayload = {
   };
 };
 
+const API_PREFIX = "/api/v1";
 const DEFAULT_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 function normalizeBaseUrl(baseUrl: string) {
-  const trimmed = baseUrl.trim();
-  return trimmed.endsWith("/") ? trimmed.slice(0, -1) : trimmed || DEFAULT_BASE_URL;
+  const trimmed = baseUrl.trim() || DEFAULT_BASE_URL;
+  const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `http://${trimmed}`;
+
+  try {
+    const url = new URL(candidate);
+    const pathname = url.pathname.replace(/\/+$/, "");
+
+    if (!pathname || pathname === "/") {
+      url.pathname = API_PREFIX;
+    } else if (pathname === "/api") {
+      url.pathname = API_PREFIX;
+    }
+
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    return trimmed.endsWith("/") ? trimmed.slice(0, -1) : trimmed;
+  }
 }
 
 async function requestJson<T>(

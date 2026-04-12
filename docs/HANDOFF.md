@@ -31,6 +31,7 @@
 - API: `http://127.0.0.1:8001`
 - The API port is overridden because host port `8000` is already occupied on this machine.
 - Browser-origin requests from the analyst console are now allowed by the API's localhost CORS configuration.
+- The analyst console now accepts either a host-only API URL or a full `/api/v1` URL.
 
 ## Last Verified Commands
 

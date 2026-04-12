@@ -83,6 +83,12 @@ The API now allows the local analyst console origins by default:
 
 This is controlled by `EU_COMPLY_CORS_ALLOWED_ORIGINS` if you need to override it.
 
+The analyst console also normalizes host-only API URLs automatically, so either
+of these inputs will work in the browser:
+
+- `http://127.0.0.1:8001`
+- `http://127.0.0.1:8001/api/v1`
+
 ## Post-Deploy Validation
 
 Run these checks after deployment:

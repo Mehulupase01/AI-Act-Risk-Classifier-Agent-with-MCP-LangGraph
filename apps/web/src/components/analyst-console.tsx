@@ -588,6 +588,7 @@ export function AnalystConsole() {
               The UI is now wired to the live backend routes for cases, artifacts,
               assessments, and workflows. Use the bootstrap credentials below in
               local development, or replace them with real environment values.
+              You can enter either the full API base URL or just the host and port.
             </p>
             <form className={styles.authForm} onSubmit={handleSignIn}>
               <label className={styles.field}>
