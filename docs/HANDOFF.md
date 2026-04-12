@@ -30,6 +30,7 @@
 - Web: `http://127.0.0.1:3000`
 - API: `http://127.0.0.1:8001`
 - The API port is overridden because host port `8000` is already occupied on this machine.
+- Browser-origin requests from the analyst console are now allowed by the API's localhost CORS configuration.
 
 ## Last Verified Commands
 

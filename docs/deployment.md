@@ -74,6 +74,15 @@ Supported overrides currently include:
 - `EU_COMPLY_MINIO_PORT`
 - `EU_COMPLY_MINIO_CONSOLE_PORT`
 
+## Browser Connectivity
+
+The API now allows the local analyst console origins by default:
+
+- `http://127.0.0.1:3000`
+- `http://localhost:3000`
+
+This is controlled by `EU_COMPLY_CORS_ALLOWED_ORIGINS` if you need to override it.
+
 ## Post-Deploy Validation
 
 Run these checks after deployment:

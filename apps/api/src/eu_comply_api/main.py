@@ -1,6 +1,7 @@
 from contextlib import AsyncExitStack, asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from eu_comply_api.api.router import api_router
 from eu_comply_api.config import get_settings
@@ -33,10 +34,18 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     settings = get_settings()
     session_factory = get_session_factory(settings)
+    cors_origins = settings.resolved_cors_origins()
     app = FastAPI(
         title=settings.app_name,
         version=settings.app_version,
         lifespan=lifespan,
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        allow_credentials=False,
     )
     app.include_router(api_router, prefix=settings.api_prefix)
     app.state.mcp_servers = build_mcp_servers(settings, session_factory)

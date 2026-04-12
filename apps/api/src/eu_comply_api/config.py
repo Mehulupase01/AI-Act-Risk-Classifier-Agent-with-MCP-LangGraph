@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     app_version: str = "0.1.0"
     environment: EnvironmentKind = "development"
     api_prefix: str = "/api/v1"
+    cors_allowed_origins: str = "http://127.0.0.1:3000,http://localhost:3000"
     secret_key: str = "change-me-in-production"
     access_token_expire_minutes: int = 60
     auto_create_schema: bool = True
@@ -59,6 +60,14 @@ class Settings(BaseSettings):
     runtime_discovery_timeout_seconds: float = Field(default=15.0, ge=1.0)
     mcp_enabled: bool = True
     mcp_default_org_slug: str | None = None
+
+    def resolved_cors_origins(self) -> list[str]:
+        raw = self.cors_allowed_origins.strip()
+        if not raw:
+            return []
+        if raw == "*":
+            return ["*"]
+        return [origin.strip() for origin in raw.split(",") if origin.strip()]
 
 
 @lru_cache(maxsize=1)

@@ -14,6 +14,8 @@ docker build -f apps/api/Dockerfile -t eu-comply-api:verify .
 docker build -f apps/web/Dockerfile -t eu-comply-web:verify .
 docker compose -f ops/docker/compose.full.yml build
 docker compose -f ops/docker/compose.full.yml config
+Invoke-WebRequest -Method Options http://127.0.0.1:8001/api/v1/auth/login
+Invoke-WebRequest -Method Post http://127.0.0.1:8001/api/v1/auth/login
 ```
 
 ## Current Verification State
@@ -31,6 +33,8 @@ docker compose -f ops/docker/compose.full.yml config
 - The web Docker image builds successfully against a live Docker daemon.
 - The full-stack compose build succeeds against a live Docker daemon.
 - The full localhost stack deployment succeeds, with the API responding on `http://127.0.0.1:8001` and the web app responding on `http://127.0.0.1:3000`.
+- Browser preflight requests from the localhost analyst console now succeed against `/api/v1/auth/login`.
+- Browser-origin login requests from the localhost analyst console now succeed with the correct `Access-Control-Allow-Origin` response header.
 - Mounted MCP server tests now pass against the FastAPI app using streamable HTTP transport.
 - Connector sync and reassessment route tests pass, including auto-processed workflow creation and unsupported-event rejection paths.
 - Audit-pack export tests now pass, including ZIP manifest validation and bundled workspace/report artifacts.
@@ -41,3 +45,4 @@ docker compose -f ops/docker/compose.full.yml config
 - SQLite verification now runs cleanly through the connector and reassessment migration path.
 - The previous Docker-daemon verification gap is closed.
 - Alembic revision identifiers were shortened where needed so PostgreSQL-based deployments no longer fail on the default `alembic_version.version_num` length constraint.
+- Localhost CORS handling is now configured explicitly so browser-based operator sessions can reach the API during local deployment.
