@@ -207,6 +207,51 @@ function normalizeBaseUrl(baseUrl: string) {
   }
 }
 
+function buildCandidateBaseUrls(baseUrl: string): string[] {
+  const candidates: string[] = [];
+  const add = (value: string) => {
+    const normalized = normalizeBaseUrl(value);
+    if (!candidates.includes(normalized)) {
+      candidates.push(normalized);
+    }
+  };
+
+  add(baseUrl);
+  add(DEFAULT_BASE_URL);
+
+  try {
+    const url = new URL(normalizeBaseUrl(baseUrl));
+    const isLocalHost = ["127.0.0.1", "localhost"].includes(url.hostname);
+    if (isLocalHost) {
+      add(`${url.protocol}//${url.hostname}:8001`);
+      add(`${url.protocol}//${url.hostname}:8000`);
+    }
+  } catch {
+    add("http://127.0.0.1:8001");
+    add("http://127.0.0.1:8000");
+  }
+
+  return candidates;
+}
+
+export async function resolveReachableBaseUrl(baseUrl: string): Promise<string> {
+  const candidates = buildCandidateBaseUrls(baseUrl);
+  for (const candidate of candidates) {
+    try {
+      const response = await fetch(`${candidate}/health/liveness`, {
+        method: "GET",
+      });
+      if (response.ok) {
+        return candidate;
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  return normalizeBaseUrl(baseUrl);
+}
+
 async function requestJson<T>(
   path: string,
   options: RequestInit & { baseUrl: string; token?: string },

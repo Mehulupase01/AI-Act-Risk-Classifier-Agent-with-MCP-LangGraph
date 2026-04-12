@@ -24,6 +24,7 @@ import {
   listWorkflows,
   login,
   processArtifact,
+  resolveReachableBaseUrl,
   runAssessment,
   runWorkflow,
   uploadArtifact,
@@ -232,9 +233,13 @@ export function AnalystConsole() {
     const savedOrganizationName = window.localStorage.getItem(STORAGE_KEYS.orgName);
     const savedEmail = window.localStorage.getItem(STORAGE_KEYS.email);
 
-    if (savedBaseUrl) {
-      setBaseUrl(savedBaseUrl);
-    }
+    void (async () => {
+      const resolvedBaseUrl = await resolveReachableBaseUrl(savedBaseUrl ?? DEFAULT_BASE_URL);
+      setBaseUrl(resolvedBaseUrl);
+      if (savedBaseUrl !== resolvedBaseUrl) {
+        window.localStorage.setItem(STORAGE_KEYS.baseUrl, resolvedBaseUrl);
+      }
+    })();
     if (savedEmail) {
       setEmail(savedEmail);
     }
@@ -289,12 +294,14 @@ export function AnalystConsole() {
     event.preventDefault();
     setBusyAction("sign-in");
     try {
-      const session = await login(baseUrl, email, password);
-      window.localStorage.setItem(STORAGE_KEYS.baseUrl, baseUrl);
+      const resolvedBaseUrl = await resolveReachableBaseUrl(baseUrl);
+      const session = await login(resolvedBaseUrl, email, password);
+      window.localStorage.setItem(STORAGE_KEYS.baseUrl, resolvedBaseUrl);
       window.localStorage.setItem(STORAGE_KEYS.token, session.access_token);
       window.localStorage.setItem(STORAGE_KEYS.orgName, session.organization.name);
       window.localStorage.setItem(STORAGE_KEYS.email, email);
       startTransition(() => {
+        setBaseUrl(resolvedBaseUrl);
         setToken(session.access_token);
         setOrganizationName(session.organization.name);
       });
@@ -302,7 +309,7 @@ export function AnalystConsole() {
         tone: "success",
         text: `Connected to ${session.organization.name}. Loading live cases...`,
       });
-      await refreshCases(session.access_token, baseUrl);
+      await refreshCases(session.access_token, resolvedBaseUrl);
     } catch (error) {
       setNotice({
         tone: "error",

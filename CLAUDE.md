@@ -50,6 +50,7 @@ npm --prefix apps/web run build
 - Localhost deployment is now verified end to end with the compose stack running successfully. The current local run uses `EU_COMPLY_API_PORT=8001` because port `8000` is already occupied on the host.
 - Browser access from the analyst console to the local API is now verified after adding explicit localhost CORS handling for `127.0.0.1:3000` and `localhost:3000`.
 - The analyst console now normalizes host-only API base URLs such as `http://127.0.0.1:8001` to the correct `/api/v1` path automatically.
+- The analyst console now probes localhost API candidates and repairs stale saved base URLs during hydration so older `8000` local storage values do not keep the UI pointed at a dead port.
 
 ## Update Rule
 
